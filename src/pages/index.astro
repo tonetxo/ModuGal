@@ -51,6 +51,8 @@ const images = [
 </Layout>
 
 <style>
+  /* All styles remain the same */
+  .tagline { font-size: 1.2rem; margin-bottom: 2rem; color: var(--color-text); min-height: 3em; display: flex; align-items: center; justify-content: center; }
   .main-grid { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; justify-items: center; width: 100%; min-height: 100vh; padding: 2rem; box-sizing: border-box; position: relative; }
   .background-wave { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
   #sine-wave-path-1, #sine-wave-path-2 { fill: none; stroke: var(--color-accent-1); stroke-width: 2; stroke-opacity: 0.6; filter: drop-shadow(0 0 5px var(--color-accent-1)); }
@@ -60,12 +62,7 @@ const images = [
   main { width: 100%; max-width: 700px; }
 	.container { width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; }
 	header { margin-bottom: 2rem; }
-	h1 {
-    font-family: 'Castelao', var(--font-family-headings);
-    font-size: 5rem; /* Adjusted for new font */
-    line-height: 1;
-    margin-bottom: 0.5rem;
-  }
+	h1 { font-family: 'Castelao', var(--font-family-headings); font-size: 5rem; line-height: 1; margin-bottom: 0.5rem; }
 	h2 { font-size: 1.5rem; font-family: var(--font-family-body); color: var(--color-text); font-weight: 400; }
   .knob-label { font-family: var(--font-family-headings); color: var(--color-accent-1); font-size: 1.8rem; margin: 0; text-shadow: 0 0 5px var(--color-accent-1); }
   .knob { position: relative; width: 150px; height: 150px; cursor: ns-resize; display: flex; justify-content: center; align-items: center; }
@@ -80,15 +77,6 @@ const images = [
   .slideshow-image { grid-area: 1 / 1 / 2 / 2; width: 100%; height: 100%; object-fit: contain; opacity: 0; transition: opacity 0.75s ease-in-out; visibility: hidden; transform-origin: center center; }
   .slideshow-image.visible { opacity: 1; visibility: visible; }
 	.content { margin-top: 2rem; }
-  .tagline {
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
-    color: var(--color-text);
-    min-height: 3em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
 	.cta-buttons { display: flex; justify-content: center; gap: 1rem; }
 	.button { display: inline-block; padding: 0.8rem 1.5rem; border-radius: 4px; text-decoration: none; font-weight: 600; font-family: var(--font-family-body); transition: all 0.3s ease; border: 2px solid transparent; }
 	.button.primary { background-color: var(--color-accent-1); color: var(--color-base); border-color: var(--color-accent-1); }
@@ -105,7 +93,6 @@ const images = [
     const svg = document.getElementById('sine-wave-svg');
     const sinePath1 = document.getElementById('sine-wave-path-1');
     const sinePath2 = document.getElementById('sine-wave-path-2');
-    let audioContext; try { audioContext = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { console.error('Web Audio API is not supported'); }
     let peakAmplitude = 0;
     let currentAngle = 0;
     let currentLang = defaultLang;
@@ -147,8 +134,22 @@ const images = [
       }
     }
 
-    // --- Audio Logic ---
-    function playMenuBlip(freq = 440) { if (!audioContext) return; const osc = audioContext.createOscillator(); const gain = audioContext.createGain(); osc.connect(gain); gain.connect(audioContext.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(freq, audioContext.currentTime); gain.gain.setValueAtTime(0.2, audioContext.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.2); osc.start(audioContext.currentTime); osc.stop(audioContext.currentTime + 0.2); }
+    // --- Audio Logic (for Knob Blips) ---
+    function playMenuBlip(freq = 440) {
+      // Use the global audio context from the layout!
+      if (!window.audioContext) return;
+      const audioContext = window.audioContext;
+      const osc = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      osc.connect(gain);
+      gain.connect(audioContext.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, audioContext.currentTime);
+      gain.gain.setValueAtTime(0.2, audioContext.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.2);
+      osc.start(audioContext.currentTime);
+      osc.stop(audioContext.currentTime + 0.2);
+    }
 
     // --- Knob Logic ---
     const knob = document.getElementById('nav-knob');
