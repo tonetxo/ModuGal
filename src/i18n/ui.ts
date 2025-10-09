@@ -19,6 +19,7 @@ export const ui = {
     'nav.modules': 'Módulos',
     'nav.demos': 'Demos',
     'nav.support': 'Soporte',
+    'footer.rights': 'Todos os dereitos reservados.',
   },
   es: {
     'knob.menu': 'Menú',
@@ -32,6 +33,7 @@ export const ui = {
     'nav.modules': 'Módulos',
     'nav.demos': 'Demos',
     'nav.support': 'Soporte',
+    'footer.rights': 'Todos los derechos reservados.',
   },
   en: {
     'knob.menu': 'Menu',
@@ -45,5 +47,6 @@ export const ui = {
     'nav.modules': 'Modules',
     'nav.demos': 'Demos',
     'nav.support': 'Support',
+    'footer.rights': 'All Rights Reserved.',
   },
 } as const;

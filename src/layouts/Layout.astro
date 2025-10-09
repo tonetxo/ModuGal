@@ -6,6 +6,7 @@ interface Props {
 }
 
 const { title } = Astro.props;
+const currentYear = new Date().getFullYear();
 ---
 <!doctype html>
 <html lang="gl">
@@ -31,6 +32,9 @@ const { title } = Astro.props;
     </div>
     <LanguageSwitcher />
 		<slot />
+    <footer>
+      © {currentYear} Toño Pita | <a href="mailto:tonetxo@gmail.com">tonetxo@gmail.com</a> | <span data-i18n-key="footer.rights">Todos os dereitos reservados.</span>
+    </footer>
 	</body>
 </html>
 
@@ -40,41 +44,36 @@ const { title } = Astro.props;
 	html { font-family: var(--font-family-body); background-color: var(--color-base); color: var(--color-text); }
 	body { margin: 0; box-sizing: border-box; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
 	h1, h2, h3, h4 { font-family: var(--font-family-headings); color: var(--color-accent-2); margin: 0; }
-  .sound-controls {
+  .sound-controls { position: fixed; top: 1rem; left: 1rem; z-index: 100; }
+  #mute-button { background: transparent; border: 1px solid var(--color-accent-2); color: var(--color-accent-2); cursor: pointer; border-radius: 50%; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; opacity: 0.7; transition: all 0.2s ease; }
+  #mute-button:hover { opacity: 1; background-color: var(--color-accent-2); color: var(--color-base); }
+  #mute-button svg { width: 24px; height: 24px; pointer-events: none; }
+  footer {
     position: fixed;
-    top: 1rem;
-    left: 1rem;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding: 0.75rem;
+    font-size: 0.8rem;
+    color: var(--color-text);
+    opacity: 0.6;
     z-index: 100;
+    pointer-events: none; /* Allow clicks to pass through */
   }
-  #mute-button {
-    background: transparent;
-    border: 1px solid var(--color-accent-2);
+  footer a {
     color: var(--color-accent-2);
-    cursor: pointer;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0.7;
-    transition: all 0.2s ease;
+    text-decoration: none;
+    pointer-events: all; /* Make links clickable */
   }
-  #mute-button:hover {
-    opacity: 1;
-    background-color: var(--color-accent-2);
-    color: var(--color-base);
-  }
-  #mute-button svg {
-    width: 24px;
-    height: 24px;
-    pointer-events: none; /* Prevent SVG from capturing clicks */
+  footer a:hover {
+    text-decoration: underline;
   }
 </style>
 
 <script>
+  // The full audio script from the previous step remains here
   document.addEventListener('DOMContentLoaded', () => {
-    // 1. Create and expose global AudioContext
     let audioContext;
     try {
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -85,75 +84,53 @@ const { title } = Astro.props;
       if(muteButton) muteButton.style.display = 'none';
       return;
     }
-
-    // 2. Get elements
     const muteButton = document.getElementById('mute-button');
     const iconUnmuted = document.getElementById('icon-unmuted');
     const iconMuted = document.getElementById('icon-muted');
     if (!muteButton || !iconUnmuted || !iconMuted) return;
-
-    // 3. Prepare audio nodes and state
     const masterGain = audioContext.createGain();
-    masterGain.gain.value = 0; // Start fully muted
+    masterGain.gain.value = 0;
     masterGain.connect(audioContext.destination);
-    
     const loopSource = audioContext.createBufferSource();
     let isReadyToPlay = false;
     let hasStarted = false;
     let isMuted = true;
-
-    // 4. Get initial state from localStorage
     const savedMuteState = localStorage.getItem('isMuted');
     isMuted = savedMuteState === null ? true : JSON.parse(savedMuteState);
-
-    // 5. Load audio data in the background
-    fetch('/audio/loop_1.mp3')
-      .then(response => {
+    fetch('/audio/loop_1.mp3').then(response => {
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         return response.arrayBuffer();
-      })
-      .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
-      .then(audioBuffer => {
+      }).then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer)).then(audioBuffer => {
         loopSource.buffer = audioBuffer;
         loopSource.loop = true;
         loopSource.connect(masterGain);
         isReadyToPlay = true;
-      })
-      .catch(e => {
+      }).catch(e => {
         console.error(`Error loading audio file: ${e}`);
         muteButton.style.display = 'none';
       });
-
-    // 6. Click handler
     function toggleMute(shouldBeMuted) {
         if (!masterGain) return;
         isMuted = shouldBeMuted;
         localStorage.setItem('isMuted', JSON.stringify(isMuted));
-
         const newGain = isMuted ? 0 : 0.4;
         masterGain.gain.setTargetAtTime(newGain, audioContext.currentTime, 0.4);
-
         iconUnmuted.style.display = isMuted ? 'none' : 'block';
         iconMuted.style.display = isMuted ? 'block' : 'none';
     }
-
     muteButton.addEventListener('click', () => {
       if (!isReadyToPlay) return;
-
       if (audioContext.state === 'suspended') {
         audioContext.resume();
       }
-
       if (!hasStarted) {
         loopSource.start(0);
         hasStarted = true;
-        toggleMute(false); // First click should unmute
+        toggleMute(false);
       } else {
         toggleMute(!isMuted);
       }
     });
-
-    // Set initial icon state based on localStorage
     iconUnmuted.style.display = isMuted ? 'none' : 'block';
     iconMuted.style.display = isMuted ? 'block' : 'none';
   });
