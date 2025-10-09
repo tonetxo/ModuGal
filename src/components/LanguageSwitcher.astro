@@ -1,0 +1,93 @@
+---
+import { languages } from '../i18n/ui';
+---
+
+<div class="lang-switcher">
+  {Object.entries(languages).map(([lang, label]) => (
+    <button class:list={[`lang-button`]} data-lang={lang}>
+      {label}
+    </button>
+  ))}
+</div>
+
+<style>
+  .lang-switcher {
+    position: fixed; /* Stay on screen */
+    top: 1rem;
+    right: 1rem;
+    z-index: 100;
+    display: flex;
+    gap: 0.5rem;
+  }
+  .lang-button {
+    background-color: transparent;
+    border: 1px solid var(--color-accent-2);
+    color: var(--color-accent-2);
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: var(--font-family-body);
+    opacity: 0.7;
+    transition: all 0.2s ease;
+  }
+  .lang-button:hover {
+    opacity: 1;
+    background-color: var(--color-accent-2);
+    color: var(--color-base);
+  }
+  .lang-button.active {
+    opacity: 1;
+    background-color: var(--color-accent-1);
+    border-color: var(--color-accent-1);
+    color: var(--color-base);
+  }
+</style>
+
+<script>
+  import { ui, defaultLang } from '../i18n/ui';
+
+  type Lang = keyof typeof ui;
+  type Key = keyof typeof ui[Lang];
+
+  function getLang(): Lang {
+    if (typeof localStorage !== 'undefined') {
+      const storedLang = localStorage.getItem('lang');
+      if (storedLang && storedLang in ui) {
+        return storedLang as Lang;
+      }
+    }
+    return defaultLang;
+  }
+
+  function setLang(lang: Lang) {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('lang', lang);
+    }
+    
+    document.querySelectorAll('[data-i18n-key]').forEach(el => {
+      const key = el.getAttribute('data-i18n-key') as Key;
+      if (key && ui[lang] && ui[lang][key]) {
+        (el as HTMLElement).innerText = ui[lang][key];
+      }
+    });
+
+    document.querySelectorAll('.lang-button').forEach(button => {
+      button.classList.toggle('active', button.getAttribute('data-lang') === lang);
+    });
+
+    const event = new CustomEvent('language-change', { detail: { lang } });
+    document.dispatchEvent(event);
+  }
+
+  // Set initial language on load
+  const initialLang = getLang();
+  setLang(initialLang);
+
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    if (target.matches('.lang-button')) {
+      const lang = target.getAttribute('data-lang') as Lang;
+      setLang(lang);
+    }
+  });
+</script>

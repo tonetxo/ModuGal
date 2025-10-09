@@ -7,7 +7,7 @@ const images = [
 ];
 ---
 
-<Layout title="ModuGal - El Taller del Inventor Sónico">
+<Layout title="ModuGal - Sintetizador Modular Virtual">
 	<div class="main-grid">
     <svg id="sine-wave-svg" class="background-wave">
       <path id="sine-wave-path-1"></path>
@@ -15,7 +15,7 @@ const images = [
     </svg>
 
     <div class="knob-area">
-      <h4 class="knob-label">Menú</h4>
+      <h4 class="knob-label" data-i18n-key="knob.menu">Menú</h4>
       <div id="nav-knob" class="knob">
         <div class="knob-base"></div>
         <div class="knob-ring"><div class="knob-indicator"></div></div>
@@ -27,7 +27,7 @@ const images = [
       <div class="container">
         <header>
           <h1>ModuGal</h1>
-          <h2>Sintetizador Modular Virtual</h2>
+          <h2 data-i18n-key="header.subtitle">Sintetizador Modular Virtual</h2>
         </header>
         <div class="slideshow-container">
           {images.map((image, index) => (
@@ -35,10 +35,10 @@ const images = [
           ))}
         </div>
         <div class="content">
-          <p class="tagline">El taller del inventor sónico. Esculpe tus paisajes sonoros con una precisión de otra era.</p>
+          <p class="tagline" data-i18n-key="tagline">El taller del inventor sónico. Esculpe tus paisajes sonoros con una precisión de otra era.</p>
           <div class="cta-buttons">
-            <a href="#" class="button primary">Comprar Versión Completa</a>
-            <a href="#" class="button secondary">Descargar Demo</a>
+            <a href="#" class="button primary" data-i18n-key="button.buy">Comprar Versión Completa</a>
+            <a href="#" class="button secondary" data-i18n-key="button.demo">Descargar Demo</a>
           </div>
         </div>
       </div>
@@ -60,7 +60,12 @@ const images = [
   main { width: 100%; max-width: 700px; }
 	.container { width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; }
 	header { margin-bottom: 2rem; }
-	h1 { font-size: 4rem; line-height: 1; margin-bottom: 0.5rem; }
+	h1 {
+    font-family: 'Castelao', var(--font-family-headings);
+    font-size: 5rem; /* Adjusted for new font */
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
 	h2 { font-size: 1.5rem; font-family: var(--font-family-body); color: var(--color-text); font-weight: 400; }
   .knob-label { font-family: var(--font-family-headings); color: var(--color-accent-1); font-size: 1.8rem; margin: 0; text-shadow: 0 0 5px var(--color-accent-1); }
   .knob { position: relative; width: 150px; height: 150px; cursor: ns-resize; display: flex; justify-content: center; align-items: center; }
@@ -75,7 +80,15 @@ const images = [
   .slideshow-image { grid-area: 1 / 1 / 2 / 2; width: 100%; height: 100%; object-fit: contain; opacity: 0; transition: opacity 0.75s ease-in-out; visibility: hidden; transform-origin: center center; }
   .slideshow-image.visible { opacity: 1; visibility: visible; }
 	.content { margin-top: 2rem; }
-	.tagline { font-size: 1.2rem; margin-bottom: 2rem; color: var(--color-text); }
+  .tagline {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    color: var(--color-text);
+    min-height: 3em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 	.cta-buttons { display: flex; justify-content: center; gap: 1rem; }
 	.button { display: inline-block; padding: 0.8rem 1.5rem; border-radius: 4px; text-decoration: none; font-weight: 600; font-family: var(--font-family-body); transition: all 0.3s ease; border: 2px solid transparent; }
 	.button.primary { background-color: var(--color-accent-1); color: var(--color-base); border-color: var(--color-accent-1); }
@@ -85,6 +98,8 @@ const images = [
 </style>
 
 <script>
+  import { ui, defaultLang } from '../i18n/ui';
+
   document.addEventListener('DOMContentLoaded', () => {
     // --- Global Elements & State ---
     const svg = document.getElementById('sine-wave-svg');
@@ -93,6 +108,7 @@ const images = [
     let audioContext; try { audioContext = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { console.error('Web Audio API is not supported'); }
     let peakAmplitude = 0;
     let currentAngle = 0;
+    let currentLang = defaultLang;
 
     // --- Sine Wave Logic ---
     function updateSineWaves() {
@@ -106,15 +122,9 @@ const images = [
       const vibratoFrequency = 0.4;
       const currentVibratoAmplitude = (peakAmplitude / 50) * 8;
       const startX1 = svgWidth * 0.20;
-      const startX2 = svgWidth * 0.82; // Move closer to the right text
+      const startX2 = svgWidth * 0.82;
       const yOffset = svgHeight / 2;
-
-      if (currentAngle === 0) {
-        sinePath1.setAttribute('d', '');
-        sinePath2.setAttribute('d', '');
-        return;
-      }
-
+      if (currentAngle === 0) { sinePath1.setAttribute('d', ''); sinePath2.setAttribute('d', ''); return; }
       let pathData1 = `M ${startX1} ${yOffset}`;
       let pathData2 = `M ${startX2} ${yOffset}`;
       for (let x = 0; x <= waveLength; x++) {
@@ -145,33 +155,28 @@ const images = [
     if (knob) {
       const knobRing = knob.querySelector('.knob-ring');
       const menuTitleDisplay = document.getElementById('menu-title-display');
-      const menuItems = [{ name: 'Inicio', path: '/', freq: 261.63 }, { name: 'Módulos', path: '/modulos', freq: 329.63 }, { name: 'Demos', path: '/demos', freq: 392.00 }, { name: 'Soporte', path: '/soporte', freq: 440.00 }];
+      const menuItems = [{ nameKey: 'nav.home', path: '/', freq: 261.63 }, { nameKey: 'nav.modules', path: '/modulos', freq: 329.63 }, { nameKey: 'nav.demos', path: '/demos', freq: 392.00 }, { nameKey: 'nav.support', path: '/soporte', freq: 440.00 }];
       let isDraggingKnob = false, startY = 0, lastAngle = 0, selectedIndex = 0;
 
       function updateMenu() {
         const totalItems = menuItems.length;
         const anglePerItem = 270 / (totalItems - 1);
         const newIndex = Math.round(currentAngle / anglePerItem);
-        if (newIndex !== selectedIndex) {
-          playMenuBlip(menuItems[newIndex].freq);
-          peakAmplitude = 50;
-          decayPeak();
-        }
+        if (newIndex !== selectedIndex) { playMenuBlip(menuItems[newIndex].freq); peakAmplitude = 50; decayPeak(); }
         selectedIndex = newIndex;
         selectedIndex = Math.max(0, Math.min(totalItems - 1, selectedIndex));
-        menuTitleDisplay.textContent = menuItems[selectedIndex].name;
-        menuTitleDisplay.classList.toggle('visible', menuItems[selectedIndex].name !== 'Inicio');
+        const nameKey = menuItems[selectedIndex].nameKey;
+        menuTitleDisplay.textContent = ui[currentLang][nameKey];
+        menuTitleDisplay.classList.toggle('visible', nameKey !== 'nav.home');
       }
 
-      knob.addEventListener('mousedown', (e) => { e.preventDefault(); isDraggingKnob = true; startY = e.clientY; lastAngle = currentAngle; knobRing.style.transition = 'none'; });
-      window.addEventListener('mousemove', (e) => {
-        if (!isDraggingKnob) return;
-        const deltaY = e.clientY - startY;
-        currentAngle = Math.max(0, Math.min(270, lastAngle - deltaY * 1.5));
-        knobRing.style.transform = `rotate(${currentAngle}deg)`;
+      document.addEventListener('language-change', (e) => {
+        currentLang = e.detail.lang;
         updateMenu();
-        updateSineWaves();
       });
+
+      knob.addEventListener('mousedown', (e) => { e.preventDefault(); isDraggingKnob = true; startY = e.clientY; lastAngle = currentAngle; knobRing.style.transition = 'none'; });
+      window.addEventListener('mousemove', (e) => { if (!isDraggingKnob) return; const deltaY = e.clientY - startY; currentAngle = Math.max(0, Math.min(270, lastAngle - deltaY * 1.5)); knobRing.style.transform = `rotate(${currentAngle}deg)`; updateMenu(); updateSineWaves(); });
       window.addEventListener('mouseup', () => { if (!isDraggingKnob) return; isDraggingKnob = false; knobRing.style.transition = 'transform 0.1s linear'; });
       knob.addEventListener('click', (e) => { if (Math.abs(lastAngle - currentAngle) > 5) return; window.location.href = menuItems[selectedIndex].path; });
       updateMenu();
