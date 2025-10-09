@@ -102,8 +102,12 @@ const { title } = Astro.props;
     let hasStarted = false;
     let isMuted = true;
 
-    // 4. Load audio data in the background
-    fetch('/audio/loop_1.mp3') // CORRECTED FILENAME
+    // 4. Get initial state from localStorage
+    const savedMuteState = localStorage.getItem('isMuted');
+    isMuted = savedMuteState === null ? true : JSON.parse(savedMuteState);
+
+    // 5. Load audio data in the background
+    fetch('/audio/loop_1.mp3')
       .then(response => {
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         return response.arrayBuffer();
@@ -113,42 +117,44 @@ const { title } = Astro.props;
         loopSource.buffer = audioBuffer;
         loopSource.loop = true;
         loopSource.connect(masterGain);
-        isReadyToPlay = true; // Signal that we are ready
+        isReadyToPlay = true;
       })
       .catch(e => {
         console.error(`Error loading audio file: ${e}`);
         muteButton.style.display = 'none';
       });
 
-    // 5. Simplified click handler
-    muteButton.addEventListener('click', () => {
-      if (!isReadyToPlay) return; // Don't do anything if audio hasn't loaded
+    // 6. Click handler
+    function toggleMute(shouldBeMuted) {
+        if (!masterGain) return;
+        isMuted = shouldBeMuted;
+        localStorage.setItem('isMuted', JSON.stringify(isMuted));
 
-      // Resume context if suspended (required by modern browsers)
+        const newGain = isMuted ? 0 : 0.4;
+        masterGain.gain.setTargetAtTime(newGain, audioContext.currentTime, 0.4);
+
+        iconUnmuted.style.display = isMuted ? 'none' : 'block';
+        iconMuted.style.display = isMuted ? 'block' : 'none';
+    }
+
+    muteButton.addEventListener('click', () => {
+      if (!isReadyToPlay) return;
+
       if (audioContext.state === 'suspended') {
         audioContext.resume();
       }
 
       if (!hasStarted) {
-        // First click ever: start the sound and unmute
         loopSource.start(0);
         hasStarted = true;
-        isMuted = false;
-        masterGain.gain.setTargetAtTime(0.4, audioContext.currentTime, 0.1);
+        toggleMute(false); // First click should unmute
       } else {
-        // Subsequent clicks: just toggle mute
-        isMuted = !isMuted;
-        const newGain = isMuted ? 0 : 0.4;
-        masterGain.gain.setTargetAtTime(newGain, audioContext.currentTime, 0.1);
+        toggleMute(!isMuted);
       }
-
-      // Update icon state
-      iconUnmuted.style.display = isMuted ? 'none' : 'block';
-      iconMuted.style.display = isMuted ? 'block' : 'none';
     });
 
-    // Set initial icon state
-    iconUnmuted.style.display = 'none';
-    iconMuted.style.display = 'block';
+    // Set initial icon state based on localStorage
+    iconUnmuted.style.display = isMuted ? 'none' : 'block';
+    iconMuted.style.display = isMuted ? 'block' : 'none';
   });
 </script>

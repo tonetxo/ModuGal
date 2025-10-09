@@ -51,8 +51,6 @@ const images = [
 </Layout>
 
 <style>
-  /* All styles remain the same */
-  .tagline { font-size: 1.2rem; margin-bottom: 2rem; color: var(--color-text); min-height: 3em; display: flex; align-items: center; justify-content: center; }
   .main-grid { display: grid; grid-template-columns: 1fr 2fr 1fr; align-items: center; justify-items: center; width: 100%; min-height: 100vh; padding: 2rem; box-sizing: border-box; position: relative; }
   .background-wave { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
   #sine-wave-path-1, #sine-wave-path-2 { fill: none; stroke: var(--color-accent-1); stroke-width: 2; stroke-opacity: 0.6; filter: drop-shadow(0 0 5px var(--color-accent-1)); }
@@ -77,19 +75,22 @@ const images = [
   .slideshow-image { grid-area: 1 / 1 / 2 / 2; width: 100%; height: 100%; object-fit: contain; opacity: 0; transition: opacity 0.75s ease-in-out; visibility: hidden; transform-origin: center center; }
   .slideshow-image.visible { opacity: 1; visibility: visible; }
 	.content { margin-top: 2rem; }
+  .tagline { font-size: 1.2rem; margin-bottom: 2rem; color: var(--color-text); min-height: 3em; display: flex; align-items: center; justify-content: center; }
 	.cta-buttons { display: flex; justify-content: center; gap: 1rem; }
 	.button { display: inline-block; padding: 0.8rem 1.5rem; border-radius: 4px; text-decoration: none; font-weight: 600; font-family: var(--font-family-body); transition: all 0.3s ease; border: 2px solid transparent; }
 	.button.primary { background-color: var(--color-accent-1); color: var(--color-base); border-color: var(--color-accent-1); }
 	.button.primary:hover { background-color: transparent; color: var(--color-accent-1); }
 	.button.secondary { background-color: transparent; color: var(--color-accent-2); border-color: var(--color-accent-2); }
 	.button.secondary:hover { background-color: var(--color-accent-2); color: var(--color-base); }
+  .knob-center.flash { animation: flash-effect 0.4s ease-out; }
+  @keyframes flash-effect { 0% { box-shadow: inset 0 0 5px rgba(255,255,255,0.5), 0 0 10px rgba(0,0,0,0.5); } 50% { box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.8), 0 0 25px var(--color-accent-2), 0 0 15px white; } 100% { box-shadow: inset 0 0 5px rgba(255,255,255,0.5), 0 0 10px rgba(0,0,0,0.5); } }
 </style>
 
 <script>
   import { ui, defaultLang } from '../i18n/ui';
 
   document.addEventListener('DOMContentLoaded', () => {
-    // --- Global Elements & State ---
+    // --- Global State & Elements ---
     const svg = document.getElementById('sine-wave-svg');
     const sinePath1 = document.getElementById('sine-wave-path-1');
     const sinePath2 = document.getElementById('sine-wave-path-2');
@@ -109,7 +110,7 @@ const images = [
       const vibratoFrequency = 0.4;
       const currentVibratoAmplitude = (peakAmplitude / 50) * 8;
       const startX1 = svgWidth * 0.20;
-      const startX2 = svgWidth * 0.82;
+      const startX2 = svgWidth * 0.76;
       const yOffset = svgHeight / 2;
       if (currentAngle === 0) { sinePath1.setAttribute('d', ''); sinePath2.setAttribute('d', ''); return; }
       let pathData1 = `M ${startX1} ${yOffset}`;
@@ -125,7 +126,7 @@ const images = [
       sinePath2.setAttribute('d', pathData2);
     }
 
-    // --- Animation Logic for Peaks ---
+    // --- Animation & Audio Logic ---
     function decayPeak() {
       if (peakAmplitude > 0) {
         peakAmplitude = Math.max(0, peakAmplitude - 2.5);
@@ -133,10 +134,7 @@ const images = [
         requestAnimationFrame(decayPeak);
       }
     }
-
-    // --- Audio Logic (for Knob Blips) ---
     function playMenuBlip(freq = 440) {
-      // Use the global audio context from the layout!
       if (!window.audioContext) return;
       const audioContext = window.audioContext;
       const osc = audioContext.createOscillator();
@@ -154,6 +152,7 @@ const images = [
     // --- Knob Logic ---
     const knob = document.getElementById('nav-knob');
     if (knob) {
+      const knobCenter = knob.querySelector('.knob-center');
       const knobRing = knob.querySelector('.knob-ring');
       const menuTitleDisplay = document.getElementById('menu-title-display');
       const menuItems = [{ nameKey: 'nav.home', path: '/', freq: 261.63 }, { nameKey: 'nav.modules', path: '/modulos', freq: 329.63 }, { nameKey: 'nav.demos', path: '/demos', freq: 392.00 }, { nameKey: 'nav.support', path: '/soporte', freq: 440.00 }];
@@ -163,7 +162,16 @@ const images = [
         const totalItems = menuItems.length;
         const anglePerItem = 270 / (totalItems - 1);
         const newIndex = Math.round(currentAngle / anglePerItem);
-        if (newIndex !== selectedIndex) { playMenuBlip(menuItems[newIndex].freq); peakAmplitude = 50; decayPeak(); }
+        if (newIndex !== selectedIndex) {
+          playMenuBlip(menuItems[newIndex].freq);
+          peakAmplitude = 50;
+          decayPeak();
+          if (knobCenter) {
+            knobCenter.classList.remove('flash'); // Remove to restart animation
+            void knobCenter.offsetWidth; // Trigger reflow
+            knobCenter.classList.add('flash');
+          }
+        }
         selectedIndex = newIndex;
         selectedIndex = Math.max(0, Math.min(totalItems - 1, selectedIndex));
         const nameKey = menuItems[selectedIndex].nameKey;
@@ -184,7 +192,7 @@ const images = [
       updateSineWaves();
     }
 
-    // --- Slideshow Logic (Full implementation) ---
+    // --- Slideshow Logic ---
     const slideshowContainer = document.querySelector('.slideshow-container');
     if (slideshowContainer) {
       const images = slideshowContainer.querySelectorAll('.slideshow-image');
