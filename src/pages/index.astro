@@ -55,7 +55,7 @@ const images = [
   .background-wave { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
   #sine-wave-path-1, #sine-wave-path-2 { fill: none; stroke: var(--color-accent-1); stroke-width: 2; stroke-opacity: 0.6; filter: drop-shadow(0 0 5px var(--color-accent-1)); }
   .knob-area, main, .menu-title-area { position: relative; z-index: 1; }
-  .knob-area { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1.5rem; width: 100%; height: 100%; }
+  .knob-area { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1.5rem; width: 100%; height: 100%; transform: translateY(-40px); }
   .menu-title-area { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; }
   main { width: 100%; max-width: 700px; }
 	.container { width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; }
@@ -91,20 +91,25 @@ const images = [
     const sinePath1 = document.getElementById('sine-wave-path-1');
     const sinePath2 = document.getElementById('sine-wave-path-2');
     let audioContext; try { audioContext = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { console.error('Web Audio API is not supported'); }
+    let peakAmplitude = 0;
+    let currentAngle = 0;
 
     // --- Sine Wave Logic ---
-    function updateSineWaves(knobAngle) {
+    function updateSineWaves() {
       if (!sinePath1 || !sinePath2 || !svg) return;
       const svgWidth = svg.clientWidth;
       const svgHeight = svg.clientHeight;
-      const waveLength = (svgWidth * 0.35) * (knobAngle / 270); // Adjusted max length
-      const amplitude = 30;
+      const waveLength = (svgWidth * 0.35) * (currentAngle / 270);
+      const baseAmplitude = 30;
+      const totalAmplitude = baseAmplitude + peakAmplitude;
       const frequency = 0.05;
-      const startX1 = svgWidth * 0.18; // Start closer to the edge
-      const startX2 = svgWidth * 0.82; // Start closer to the edge
-      const yOffset = svgHeight / 2 + 100;
+      const vibratoFrequency = 0.4;
+      const currentVibratoAmplitude = (peakAmplitude / 50) * 8;
+      const startX1 = svgWidth * 0.20;
+      const startX2 = svgWidth * 0.82; // Move closer to the right text
+      const yOffset = svgHeight / 2;
 
-      if (knobAngle === 0) {
+      if (currentAngle === 0) {
         sinePath1.setAttribute('d', '');
         sinePath2.setAttribute('d', '');
         return;
@@ -113,12 +118,23 @@ const images = [
       let pathData1 = `M ${startX1} ${yOffset}`;
       let pathData2 = `M ${startX2} ${yOffset}`;
       for (let x = 0; x <= waveLength; x++) {
-        const y = yOffset + Math.sin(x * frequency) * amplitude;
+        const mainWave = Math.sin(x * frequency) * totalAmplitude;
+        const vibrato = Math.sin(x * vibratoFrequency) * currentVibratoAmplitude;
+        const y = yOffset + mainWave + vibrato;
         pathData1 += ` L ${startX1 + x} ${y}`;
         pathData2 += ` L ${startX2 - x} ${y}`;
       }
       sinePath1.setAttribute('d', pathData1);
       sinePath2.setAttribute('d', pathData2);
+    }
+
+    // --- Animation Logic for Peaks ---
+    function decayPeak() {
+      if (peakAmplitude > 0) {
+        peakAmplitude = Math.max(0, peakAmplitude - 2.5);
+        updateSineWaves();
+        requestAnimationFrame(decayPeak);
+      }
     }
 
     // --- Audio Logic ---
@@ -130,13 +146,17 @@ const images = [
       const knobRing = knob.querySelector('.knob-ring');
       const menuTitleDisplay = document.getElementById('menu-title-display');
       const menuItems = [{ name: 'Inicio', path: '/', freq: 261.63 }, { name: 'Módulos', path: '/modulos', freq: 329.63 }, { name: 'Demos', path: '/demos', freq: 392.00 }, { name: 'Soporte', path: '/soporte', freq: 440.00 }];
-      let isDraggingKnob = false, currentAngle = 0, startY = 0, lastAngle = 0, selectedIndex = 0;
+      let isDraggingKnob = false, startY = 0, lastAngle = 0, selectedIndex = 0;
 
       function updateMenu() {
         const totalItems = menuItems.length;
         const anglePerItem = 270 / (totalItems - 1);
         const newIndex = Math.round(currentAngle / anglePerItem);
-        if (newIndex !== selectedIndex) { playMenuBlip(menuItems[newIndex].freq); }
+        if (newIndex !== selectedIndex) {
+          playMenuBlip(menuItems[newIndex].freq);
+          peakAmplitude = 50;
+          decayPeak();
+        }
         selectedIndex = newIndex;
         selectedIndex = Math.max(0, Math.min(totalItems - 1, selectedIndex));
         menuTitleDisplay.textContent = menuItems[selectedIndex].name;
@@ -150,15 +170,15 @@ const images = [
         currentAngle = Math.max(0, Math.min(270, lastAngle - deltaY * 1.5));
         knobRing.style.transform = `rotate(${currentAngle}deg)`;
         updateMenu();
-        updateSineWaves(currentAngle);
+        updateSineWaves();
       });
       window.addEventListener('mouseup', () => { if (!isDraggingKnob) return; isDraggingKnob = false; knobRing.style.transition = 'transform 0.1s linear'; });
       knob.addEventListener('click', (e) => { if (Math.abs(lastAngle - currentAngle) > 5) return; window.location.href = menuItems[selectedIndex].path; });
       updateMenu();
-      updateSineWaves(currentAngle);
+      updateSineWaves();
     }
 
-    // --- Slideshow Logic ---
+    // --- Slideshow Logic (Full implementation) ---
     const slideshowContainer = document.querySelector('.slideshow-container');
     if (slideshowContainer) {
       const images = slideshowContainer.querySelectorAll('.slideshow-image');
