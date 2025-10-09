@@ -17,39 +17,89 @@ const images = [
 ---
 
 <Layout title="ModuGal - El Taller del Inventor Sónico">
-	<main>
-		<div class="container">
-			<header>
-				<h1>ModuGal</h1>
-				<h2>Sintetizador Modular Virtual</h2>
-			</header>
+	<div class="main-grid">
+    <div class="knob-area">
+      <h4 class="knob-label">Menú</h4>
+      <div id="nav-knob" class="knob">
+        <div class="knob-base"></div>
+        <div class="knob-ring">
+          <div class="knob-indicator"></div>
+        </div>
+        <div class="knob-center"></div>
+      </div>
+    </div>
 
-			<div class="slideshow-container">
-        {images.map((image, index) => (
-          <img 
-            src={image.src} 
-            alt={image.alt} 
-            class={`slideshow-image ${index === 0 ? 'visible' : ''}`} 
-          />
-        ))}
-			</div>
+    <main>
+      <div class="container">
+        <header>
+          <h1>ModuGal</h1>
+          <h2>Sintetizador Modular Virtual</h2>
+        </header>
+  
+        <div class="slideshow-container">
+          {images.map((image, index) => (
+            <img 
+              src={image.src} 
+              alt={image.alt} 
+              class={`slideshow-image ${index === 0 ? 'visible' : ''}`} 
+            />
+          ))}
+        </div>
+  
+        <div class="content">
+          <p class="tagline">
+            El taller del inventor sónico. Esculpe tus paisajes sonoros con una precisión de otra era.
+          </p>
+          <div class="cta-buttons">
+            <a href="#" class="button primary">Comprar Versión Completa</a>
+            <a href="#" class="button secondary">Descargar Demo</a>
+          </div>
+        </div>
+      </div>
+    </main>
 
-			<div class="content">
-				<p class="tagline">
-					El taller del inventor sónico. Esculpe tus paisajes sonoros con una precisión de otra era.
-				</p>
-				<div class="cta-buttons">
-					<a href="#" class="button primary">Comprar Versión Completa</a>
-					<a href="#" class="button secondary">Descargar Demo</a>
-				</div>
-			</div>
-		</div>
-	</main>
+    <div class="menu-title-area">
+      <h3 id="menu-title-display"></h3>
+    </div>
+  </div>
 </Layout>
 
 <style>
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    align-items: center;
+    justify-items: center;
+    width: 100%;
+    min-height: 100vh;
+    padding: 2rem;
+    box-sizing: border-box;
+  }
+
+  .knob-area {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+    height: 100%;
+  }
+
+  .menu-title-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  main {
+    width: 100%;
+    max-width: 700px;
+  }
+
 	.container {
-		max-width: 800px;
 		width: 100%;
     display: flex;
     flex-direction: column;
@@ -74,191 +124,202 @@ const images = [
 		font-weight: 400;
 	}
 
-  .slideshow-container {
-    display: grid;
-    width: 100%;
-    max-width: 650px;
-    margin: auto;
-    border: 3px solid var(--color-accent-1);
-		border-radius: 4px;
-		box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    overflow: hidden;
-    cursor: grab;
+  /* --- Knob Styles --- */
+  .knob-label {
+    font-family: var(--font-family-headings);
+    color: var(--color-accent-1);
+    font-size: 1.8rem;
+    margin: 0;
+    text-shadow: 0 0 5px var(--color-accent-1);
   }
 
-  .slideshow-container.grabbing {
-    cursor: grabbing;
+  .knob {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    cursor: ns-resize;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
-  .slideshow-image {
-    grid-area: 1 / 1 / 2 / 2;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    opacity: 0;
-    transition: opacity 0.75s ease-in-out;
-    visibility: hidden;
-    transform-origin: center center;
-  }
+  .knob-base { position: absolute; width: 100%; height: 100%; border-radius: 50%; background-image: radial-gradient(circle at 50% 50%, #8c5a2d 0%, #593a1c 100%); box-shadow: inset 0 0 20px rgba(0,0,0,0.7), 0 5px 15px rgba(0,0,0,0.5); }
+  .knob-ring { position: absolute; width: 80%; height: 80%; border-radius: 50%; background-image: radial-gradient(circle at 50% 50%, #3d3d3d 0%, #1a1a1a 100%); box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 2px 5px rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; transition: transform 0.1s linear; }
+  .knob-center { position: absolute; width: 40%; height: 40%; border-radius: 50%; background-image: radial-gradient(circle at 30% 30%, #e0e0e0 0%, #8c8c8c 100%); box-shadow: inset 0 0 5px rgba(255,255,255,0.5), 0 0 10px rgba(0,0,0,0.5); }
+  .knob-indicator { position: absolute; width: 4px; height: 15px; background-color: var(--color-accent-2); top: 0; transform: translateY(-5px); border-radius: 2px; box-shadow: 0 0 5px var(--color-accent-2); }
 
-  .slideshow-image.visible {
-    opacity: 1;
-    visibility: visible;
-  }
+  /* --- Menu Title Styles --- */
+  .menu-title-area h3 { font-size: 2.5rem; color: var(--color-accent-1); text-shadow: 0 0 10px var(--color-accent-1); writing-mode: vertical-rl; transform: rotate(180deg); opacity: 0; transition: opacity 0.3s ease-in-out; }
+  .menu-title-area h3.visible { opacity: 1; }
 
-	.content {
-		margin-top: 2rem;
-	}
+  /* --- Slideshow Styles --- */
+  .slideshow-container { display: grid; width: 100%; margin: auto; border: 3px solid var(--color-accent-1); border-radius: 4px; box-shadow: 0 0 20px rgba(0,0,0,0.5); overflow: hidden; cursor: grab; }
+  .slideshow-container.grabbing { cursor: grabbing; }
+  .slideshow-image { grid-area: 1 / 1 / 2 / 2; width: 100%; height: 100%; object-fit: contain; opacity: 0; transition: opacity 0.75s ease-in-out; visibility: hidden; transform-origin: center center; }
+  .slideshow-image.visible { opacity: 1; visibility: visible; }
 
-	.tagline {
-		font-size: 1.2rem;
-		margin-bottom: 2rem;
-		color: var(--color-text);
-	}
-
-	.cta-buttons {
-		display: flex;
-		justify-content: center;
-		gap: 1rem;
-	}
-
-	.button {
-		display: inline-block;
-		padding: 0.8rem 1.5rem;
-		border-radius: 4px;
-		text-decoration: none;
-		font-weight: 600;
-		font-family: var(--font-family-body);
-		transition: all 0.3s ease;
-		border: 2px solid transparent;
-	}
-
-	.button.primary {
-		background-color: var(--color-accent-1);
-		color: var(--color-base);
-		border-color: var(--color-accent-1);
-	}
-
-	.button.primary:hover {
-		background-color: transparent;
-		color: var(--color-accent-1);
-	}
-
-	.button.secondary {
-		background-color: transparent;
-		color: var(--color-accent-2);
-		border-color: var(--color-accent-2);
-	}
-
-	.button.secondary:hover {
-		background-color: var(--color-accent-2);
-		color: var(--color-base);
-	}
+	.content { margin-top: 2rem; }
+	.tagline { font-size: 1.2rem; margin-bottom: 2rem; color: var(--color-text); }
+	.cta-buttons { display: flex; justify-content: center; gap: 1rem; }
+	.button { display: inline-block; padding: 0.8rem 1.5rem; border-radius: 4px; text-decoration: none; font-weight: 600; font-family: var(--font-family-body); transition: all 0.3s ease; border: 2px solid transparent; }
+	.button.primary { background-color: var(--color-accent-1); color: var(--color-base); border-color: var(--color-accent-1); }
+	.button.primary:hover { background-color: transparent; color: var(--color-accent-1); }
+	.button.secondary { background-color: transparent; color: var(--color-accent-2); border-color: var(--color-accent-2); }
+	.button.secondary:hover { background-color: var(--color-accent-2); color: var(--color-base); }
 </style>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const container = document.querySelector('.slideshow-container');
-    const images = document.querySelectorAll('.slideshow-image');
-    let currentIndex = 0;
-    let slideshowInterval;
+    // --- Slideshow & Zoom/Pan Logic ---
+    const slideshowContainer = document.querySelector('.slideshow-container');
+    if (slideshowContainer) {
+      const images = slideshowContainer.querySelectorAll('.slideshow-image');
+      let currentIndex = 0;
+      let slideshowInterval;
+      let scale = 1, panning = false, start = { x: 0, y: 0 }, transform = { x: 0, y: 0 };
 
-    // --- State for Zoom & Pan ---
-    let scale = 1;
-    let panning = false;
-    let start = { x: 0, y: 0 };
-    let transform = { x: 0, y: 0 };
+      if (images.length > 0) {
+          function applyTransform(element) {
+              if (!element) return;
+              element.style.transform = `translate(${transform.x}px, ${transform.y}px) scale(${scale})`;
+          }
 
-    if (images.length < 1) return;
+          function resetZoomPanState() {
+              scale = 1;
+              panning = false;
+              start = { x: 0, y: 0 };
+              transform = { x: 0, y: 0 };
+          }
 
-    function applyTransform(element) {
-      element.style.transform = `translate(${transform.x}px, ${transform.y}px) scale(${scale})`;
+          slideshowContainer.addEventListener('mousedown', (e) => {
+              e.preventDefault();
+              panning = true;
+              start = { x: e.clientX - transform.x, y: e.clientY - transform.y };
+              slideshowContainer.classList.add('grabbing');
+          });
+
+          slideshowContainer.addEventListener('mouseup', () => {
+              panning = false;
+              slideshowContainer.classList.remove('grabbing');
+          });
+
+          slideshowContainer.addEventListener('mousemove', (e) => {
+              e.preventDefault();
+              if (!panning || scale === 1) return;
+              transform.x = e.clientX - start.x;
+              transform.y = e.clientY - start.y;
+              applyTransform(images[currentIndex]);
+          });
+
+          slideshowContainer.addEventListener('wheel', (e) => {
+              e.preventDefault();
+              const delta = e.deltaY > 0 ? -0.1 : 0.1;
+              scale = Math.max(1, Math.min(scale + delta, 5));
+              if (scale === 1) {
+                  transform = { x: 0, y: 0 };
+              }
+              applyTransform(images[currentIndex]);
+          });
+
+          function advanceSlide() {
+              if(images[currentIndex]) {
+                  images[currentIndex].style.transform = 'translate(0px, 0px) scale(1)';
+                  images[currentIndex].classList.remove('visible');
+              }
+              resetZoomPanState();
+              currentIndex = (currentIndex + 1) % images.length;
+              if(images[currentIndex]) {
+                  images[currentIndex].classList.add('visible');
+                  applyTransform(images[currentIndex]);
+              }
+          }
+
+          function startSlideshow() {
+              stopSlideshow();
+              slideshowInterval = setInterval(advanceSlide, 3000);
+          }
+
+          function stopSlideshow() {
+              clearInterval(slideshowInterval);
+          }
+
+          slideshowContainer.addEventListener('mouseenter', stopSlideshow);
+          slideshowContainer.addEventListener('mouseleave', () => {
+              panning = false;
+              slideshowContainer.classList.remove('grabbing');
+              advanceSlide();
+              startSlideshow();
+          });
+          
+          images.forEach((img, index) => {
+              img.classList.toggle('visible', index === 0);
+          });
+          startSlideshow();
+      }
     }
 
-    function resetZoomPanState() {
-      scale = 1;
-      panning = false;
-      start = { x: 0, y: 0 };
-      transform = { x: 0, y: 0 };
-    }
+    // --- Knob Navigation Logic ---
+    const knob = document.getElementById('nav-knob');
+    if (knob) {
+      const knobRing = knob.querySelector('.knob-ring');
+      const menuTitleDisplay = document.getElementById('menu-title-display');
 
-    container.addEventListener('mousedown', (e) => {
-      e.preventDefault();
-      panning = true;
-      start = { x: e.clientX - transform.x, y: e.clientY - transform.y };
-      container.classList.add('grabbing');
-    });
+      const menuItems = [
+        { name: 'Inicio', path: '/' },
+        { name: 'Módulos', path: '/modulos' },
+        { name: 'Demos', path: '/demos' },
+        { name: 'Soporte', path: '/soporte' },
+      ];
 
-    container.addEventListener('mouseup', () => {
-      panning = false;
-      container.classList.remove('grabbing');
-    });
+      let isDraggingKnob = false;
+      let currentAngle = 0;
+      let startY = 0;
+      let lastAngle = 0;
+      let selectedIndex = 0;
 
-    container.addEventListener('mouseleave', () => {
-      panning = false;
-      container.classList.remove('grabbing');
-    });
+      function updateMenu() {
+        const totalItems = menuItems.length;
+        const anglePerItem = 270 / (totalItems - 1);
+        selectedIndex = Math.round(currentAngle / anglePerItem);
+        selectedIndex = Math.max(0, Math.min(totalItems - 1, selectedIndex));
 
-    container.addEventListener('mousemove', (e) => {
-      e.preventDefault();
-      if (!panning) return;
-      if (scale === 1) return; // No panning if not zoomed
-
-      transform.x = e.clientX - start.x;
-      transform.y = e.clientY - start.y;
-      
-      applyTransform(images[currentIndex]);
-    });
-
-    container.addEventListener('wheel', (e) => {
-      e.preventDefault();
-      const delta = e.deltaY > 0 ? -0.1 : 0.1;
-      const newScale = scale + delta;
-      
-      scale = Math.max(1, Math.min(newScale, 5)); // Clamp scale between 1 and 5
-
-      if (scale === 1) {
-        // Reset position when zoomed all the way out
-        transform = { x: 0, y: 0 };
+        menuTitleDisplay.textContent = menuItems[selectedIndex].name;
+        if (menuItems[selectedIndex].name !== 'Inicio') {
+          menuTitleDisplay.classList.add('visible');
+        } else {
+          menuTitleDisplay.classList.remove('visible');
+        }
       }
 
-      applyTransform(images[currentIndex]);
-    });
+      knob.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        isDraggingKnob = true;
+        startY = e.clientY;
+        lastAngle = currentAngle;
+        knobRing.style.transition = 'none';
+      });
 
-    // --- Slideshow Logic ---
-    function advanceSlide() {
-      // Reset current image's transform before switching
-      images[currentIndex].style.transform = 'translate(0px, 0px) scale(1)';
-      images[currentIndex].classList.remove('visible');
-      
-      resetZoomPanState();
-      
-      currentIndex = (currentIndex + 1) % images.length;
-      
-      images[currentIndex].classList.add('visible');
-      applyTransform(images[currentIndex]);
+      window.addEventListener('mousemove', (e) => {
+        if (!isDraggingKnob) return;
+        const deltaY = e.clientY - startY;
+        let newAngle = lastAngle - deltaY * 1.5; // Increased sensitivity
+        currentAngle = Math.max(0, Math.min(270, newAngle));
+        knobRing.style.transform = `rotate(${currentAngle}deg)`;
+        updateMenu();
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (!isDraggingKnob) return;
+        isDraggingKnob = false;
+        knobRing.style.transition = 'transform 0.1s linear';
+      });
+
+      knob.addEventListener('click', (e) => {
+        if (Math.abs(lastAngle - currentAngle) > 5) return; // Click vs drag threshold
+        window.location.href = menuItems[selectedIndex].path;
+      });
+
+      updateMenu();
     }
-
-    function startSlideshow() {
-      stopSlideshow(); // Prevent multiple intervals
-      slideshowInterval = setInterval(advanceSlide, 3000);
-    }
-
-    function stopSlideshow() {
-      clearInterval(slideshowInterval);
-    }
-
-    container.addEventListener('mouseenter', stopSlideshow);
-    container.addEventListener('mouseleave', () => {
-      // Advance slide immediately and then restart the interval
-      advanceSlide();
-      startSlideshow();
-    });
-
-    // Initial setup
-    images.forEach((img, index) => {
-      img.classList.toggle('visible', index === 0);
-    });
-    startSlideshow();
   });
 </script>
