@@ -67,7 +67,7 @@ import { languages } from '../i18n/ui';
     document.querySelectorAll('[data-i18n-key]').forEach(el => {
       const key = el.getAttribute('data-i18n-key') as Key;
       if (key && ui[lang] && ui[lang][key]) {
-        (el as HTMLElement).innerText = ui[lang][key];
+        (el as HTMLElement).innerHTML = ui[lang][key];
       }
     });
 
