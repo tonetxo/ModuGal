@@ -89,7 +89,7 @@ const images = [
 <script>
   import { ui, defaultLang } from '../i18n/ui';
 
-  document.addEventListener('DOMContentLoaded', () => {
+  function initHomePage() {
     // --- Global State & Elements ---
     const svg = document.getElementById('sine-wave-svg');
     const sinePath1 = document.getElementById('sine-wave-path-1');
@@ -185,6 +185,7 @@ const images = [
         selectedIndex = newIndex;
         selectedIndex = Math.max(0, Math.min(totalItems - 1, selectedIndex));
         const nameKey = menuItems[selectedIndex].nameKey;
+        const currentLang = localStorage.getItem('lang') || defaultLang;
         menuTitleDisplay.textContent = ui[currentLang][nameKey];
         menuTitleDisplay.classList.toggle('visible', nameKey !== 'nav.home');
       }
@@ -223,5 +224,7 @@ const images = [
           startSlideshow();
       }
     }
-  });
+  }
+
+  document.addEventListener('astro:page-load', initHomePage);
 </script>
