@@ -3,18 +3,330 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title="Módulos - ModuGal">
-  <div class="page-content">
+  <main class="page-content">
     <h1 data-i18n-key="nav.modules">Módulos</h1>
-    <p>Página en construcción.</p>
-    <a href="/">Volver al inicio</a>
-  </div>
+    
+    <article class="module-card">
+      <h2 class="module-title">VCO</h2>
+      <p class="module-subtitle" data-i18n-key="vco.subtitle">Oscilador Controlado por Voltaje</p>
+      
+      <p class="module-description" data-i18n-key="vco.description">
+        El VCO es la fuente de sonido principal en un sintetizador modular. Genera una señal de audio periódica (una onda) cuya frecuencia (tono) puede ser controlada por un voltaje externo, como el de un teclado o un secuenciador. Es el bloque de construcción fundamental para crear cualquier sonido.
+      </p>
+      
+      <div class="module-details">
+        <div class="module-section">
+          <h3 data-i18n-key="vco.waveforms_title">Formas de Onda</h3>
+          <ul>
+            <li><strong>Sine (Sinusoidal):</strong> <span data-i18n-key="vco.waveforms.sine">Un tono puro y suave, sin armónicos. Ideal para sonidos limpios y bajos profundos.</span></li>
+            <li><strong>Square (Cuadrada):</strong> <span data-i18n-key="vco.waveforms.square">Un sonido brillante y hueco, rico en armónicos impares. Perfecto para sonidos de tipo clarinete o leads potentes.</span></li>
+            <li><strong>Sawtooth (Diente de Sierra):</strong> <span data-i18n-key="vco.waveforms.sawtooth">Un sonido agudo, brillante y enérgico, con todos los armónicos. Es la base para cuerdas, metales y bajos agresivos.</span></li>
+            <li><strong>Triangle (Triangular):</strong> <span data-i18n-key="vco.waveforms.triangle">Similar a la sinusoidal pero con más armónicos, lo que le da un carácter un poco más brillante y metálico.</span></li>
+          </ul>
+        </div>
+
+        <div class="module-section">
+          <h3 data-i18n-key="vco.parameters_title">Parámetros y Controles</h3>
+          <ul>
+            <li><strong>FREQ (Frecuencia):</strong> <span data-i18n-key="vco.parameters.freq">Ajusta el tono principal del oscilador en un rango muy amplio (20Hz a 5000Hz).</span></li>
+            <li><strong>FINE (Afinación Fina):</strong> <span data-i18n-key="vco.parameters.fine">Permite un ajuste preciso del tono (+/- 100 céntimas), ideal para desafinar ligeramente o para una afinación perfecta.</span></li>
+            <li><strong>PW (Ancho de Pulso):</strong> <span data-i18n-key="vco.parameters.pw">Disponible solo para la onda cuadrada, modifica el timbre de la onda, desde un sonido fino y nasal a uno lleno y hueco.</span></li>
+            <li><strong>WAVE (Selector de Onda):</strong> <span data-i18n-key="vco.parameters.wave">Un botón para cambiar entre las cuatro formas de onda disponibles.</span></li>
+          </ul>
+        </div>
+
+        <div class="module-section io-section">
+          <div>
+            <h3 data-i18n-key="vco.inputs_title">Entradas (CV)</h3>
+            <ul>
+              <li><strong>1V/OCT:</strong> <span data-i18n-key="vco.inputs.voct">Entrada principal para controlar el tono melódicamente desde un teclado.</span></li>
+              <li><strong>FM1 / FM2:</strong> <span data-i18n-key="vco.inputs.fm">Entradas de Modulación de Frecuencia para crear sonidos complejos, metálicos o de tipo campana.</span></li>
+              <li><strong>PWM:</strong> <span data-i18n-key="vco.inputs.pwm">Entrada para modular el ancho de pulso (solo en onda cuadrada), creando el clásico sonido "PWM".</span></li>
+            </ul>
+          </div>
+          <div>
+            <h3 data-i18n-key="vco.outputs_title">Salidas (Audio)</h3>
+            <ul>
+              <li><strong>OUT:</strong> <span data-i18n-key="vco.outputs.out">La salida de audio principal del oscilador.</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="module-card">
+      <h2 class="module-title">Keyboard</h2>
+      <p class="module-subtitle" data-i18n-key="keyboard.subtitle">Controlador de Teclado</p>
+      
+      <p class="module-description" data-i18n-key="keyboard.description">
+        El módulo Keyboard convierte las pulsaciones de las teclas de tu ordenador en las señales estándar que el sintetizador puede entender. Es la forma más directa de tocar melodías y controlar otros módulos. No produce sonido por sí mismo, sino que actúa como el cerebro de la operación melódica.
+      </p>
+      
+      <div class="module-details">
+        <div class="module-section">
+          <h3 data-i18n-key="keyboard.parameters_title">Parámetros y Controles</h3>
+          <ul>
+            <li><strong>Octave (+/-):</strong> <span data-i18n-key="keyboard.parameters.octave">Sube o baja el registro del teclado en octavas completas, permitiéndote acceder a un rango de notas más amplio, desde bajos profundos a agudos cristalinos.</span></li>
+            <li><strong>Glide (Portamento):</strong> <span data-i18n-key="keyboard.parameters.glide">Controla el tiempo que tarda una nota en deslizarse hasta la siguiente. Con valores bajos, las notas cambian instantáneamente. Con valores altos, se crea un efecto de "portamento" o "glissando" muy característico.</span></li>
+          </ul>
+        </div>
+
+        <div class="module-section io-section">
+          <div>
+            <h3 data-i18n-key="keyboard.outputs_title">Salidas (Control)</h3>
+            <ul>
+              <li><strong>CV (Control Voltage):</strong> <span data-i18n-key="keyboard.outputs.cv">Envía la información de la altura de la nota (el tono). Se conecta a la entrada "1V/OCT" de un oscilador (VCO) para que toque la nota correcta.</span></li>
+              <li><strong>Gate:</strong> <span data-i18n-key="keyboard.outputs.gate">Envía una señal que se mantiene "abierta" mientras una tecla está pulsada y se "cierra" al soltarla. Es esencial para disparar generadores de envolvente (ADSR), que a su vez modelan el volumen o el filtro de un sonido.</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="module-card">
+      <h2 class="module-title">VCA</h2>
+      <p class="module-subtitle" data-i18n-key="vca.subtitle">Amplificador Controlado por Voltaje</p>
+      
+      <p class="module-description" data-i18n-key="vca.description">
+        El VCA actúa como una puerta de volumen automática. Recibe una señal de audio y controla su nivel basándose en un voltaje de control (CV) externo, generalmente de un generador de envolvente (ADSR). Es fundamental para dar forma a la dinámica de un sonido, definiendo cómo su volumen evoluciona en el tiempo.
+      </p>
+      
+      <div class="module-details">
+        <div class="module-section">
+          <h3 data-i18n-key="vca.parameters_title">Parámetros y Controles</h3>
+          <ul>
+            <li><strong>CV1 Level:</strong> <span data-i18n-key="vca.parameters.cv1_level">Es un atenuador para la entrada de control CV1. Define cuánta influencia tendrá la señal de control (como un ADSR) sobre el volumen de la señal de audio. A mayor nivel, más drástico será el cambio de volumen.</span></li>
+            <li><strong>MODE (Mono/Stereo):</strong> <span data-i18n-key="vca.parameters.mode">Permite cambiar el VCA entre el procesamiento de una señal de audio única (Mono) o un par estéreo (Izquierda y Derecha).</span></li>
+          </ul>
+        </div>
+
+        <div class="module-section io-section">
+          <div>
+            <h3 data-i18n-key="vca.inputs_title">Entradas</h3>
+            <ul>
+              <li><strong>In (o In L/R):</strong> <span data-i18n-key="vca.inputs.in">La entrada de audio principal que se va a procesar.</span></li>
+              <li><strong>CV1 / CV2:</strong> <span data-i18n-key="vca.inputs.cv">Entradas para el voltaje de control que modulará el volumen. Aquí es donde se conecta la salida de un ADSR o un LFO.</span></li>
+            </ul>
+          </div>
+          <div>
+            <h3 data-i18n-key="vca.outputs_title">Salidas</h3>
+            <ul>
+              <li><strong>Out (o Out L/R):</strong> <span data-i18n-key="vca.outputs.out">La salida de audio, con su volumen ya modulado por las señales de control.</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="module-card">
+      <h2 class="module-title">ADSR</h2>
+      <p class="module-subtitle" data-i18n-key="adsr.subtitle"></p>
+      
+      <p class="module-description" data-i18n-key="adsr.description"></p>
+      
+      <div class="module-details">
+        <div class="module-section">
+          <h3 data-i18n-key="adsr.phases_title"></h3>
+          <ul>
+            <li><strong>Attack (A):</strong> <span data-i18n-key="adsr.phases.attack"></span></li>
+            <li><strong>Decay (D):</strong> <span data-i18n-key="adsr.phases.decay"></span></li>
+            <li><strong>Sustain (S):</strong> <span data-i18n-key="adsr.phases.sustain"></span></li>
+            <li><strong>Release (R):</strong> <span data-i18n-key="adsr.phases.release"></span></li>
+          </ul>
+        </div>
+
+        <div class="module-section">
+          <h3 data-i18n-key="adsr.parameters_title"></h3>
+          <ul>
+            <li><strong>Attack:</strong> <span data-i18n-key="adsr.parameters.attack"></span></li>
+            <li><strong>Decay:</strong> <span data-i18n-key="adsr.parameters.decay"></span></li>
+            <li><strong>Sustain:</strong> <span data-i18n-key="adsr.parameters.sustain"></span></li>
+            <li><strong>Release:</strong> <span data-i18n-key="adsr.parameters.release"></span></li>
+          </ul>
+        </div>
+
+        <div class="module-section io-section">
+          <div>
+            <h3 data-i18n-key="adsr.inputs_title"></h3>
+            <ul>
+              <li><strong>Gate:</strong> <span data-i18n-key="adsr.inputs.gate"></span></li>
+            </ul>
+          </div>
+          <div>
+            <h3 data-i18n-key="adsr.outputs_title"></h3>
+            <ul>
+              <li><strong>CV:</strong> <span data-i18n-key="adsr.outputs.cv"></span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="module-card">
+      <h2 class="module-title">VCF</h2>
+      <p class="module-subtitle" data-i18n-key="vcf.subtitle"></p>
+      
+      <p class="module-description" data-i18n-key="vcf.description"></p>
+      
+      <div class="module-details">
+        <div class="module-section">
+          <h3 data-i18n-key="vcf.types_title"></h3>
+          <ul>
+            <li><strong>Lowpass:</strong> <span data-i18n-key="vcf.types.lowpass"></span></li>
+            <li><strong>Highpass:</strong> <span data-i18n-key="vcf.types.highpass"></span></li>
+            <li><strong>Bandpass:</strong> <span data-i18n-key="vcf.types.bandpass"></span></li>
+            <li><strong>Notch:</strong> <span data-i18n-key="vcf.types.notch"></span></li>
+          </ul>
+        </div>
+
+        <div class="module-section">
+          <h3 data-i18n-key="vcf.parameters_title"></h3>
+          <ul>
+            <li><strong>Cutoff:</strong> <span data-i18n-key="vcf.parameters.cutoff"></span></li>
+            <li><strong>Q (Resonance):</strong> <span data-i18n-key="vcf.parameters.q"></span></li>
+          </ul>
+        </div>
+
+        <div class="module-section io-section">
+          <div>
+            <h3 data-i18n-key="vcf.inputs_title"></h3>
+            <ul>
+              <li><strong>In:</strong> <span data-i18n-key="vcf.inputs.in"></span></li>
+              <li><strong>Freq CV:</strong> <span data-i18n-key="vcf.inputs.freq_cv"></span></li>
+              <li><strong>Freq CV 2:</strong> <span data-i18n-key="vcf.inputs.freq_cv2"></span></li>
+              <li><strong>Q CV:</strong> <span data-i18n-key="vcf.inputs.q_cv"></span></li>
+            </ul>
+          </div>
+          <div>
+            <h3 data-i18n-key="vcf.outputs_title"></h3>
+            <ul>
+              <li><strong>Out:</strong> <span data-i18n-key="vcf.outputs.out"></span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="module-card">
+      <h2 class="module-title">LFO</h2>
+      <p class="module-subtitle" data-i18n-key="lfo.subtitle"></p>
+      
+      <p class="module-description" data-i18n-key="lfo.description"></p>
+      
+      <div class="module-details">
+        <div class="module-section">
+          <h3 data-i18n-key="lfo.waveforms_title"></h3>
+          <ul>
+            <li><strong>Sine:</strong> <span data-i18n-key="lfo.waveforms.sine"></span></li>
+            <li><strong>Square:</strong> <span data-i18n-key="lfo.waveforms.square"></span></li>
+            <li><strong>Sawtooth:</strong> <span data-i18n-key="lfo.waveforms.sawtooth"></span></li>
+            <li><strong>Triangle:</strong> <span data-i18n-key="lfo.waveforms.triangle"></span></li>
+          </ul>
+        </div>
+
+        <div class="module-section">
+          <h3 data-i18n-key="lfo.parameters_title"></h3>
+          <ul>
+            <li><strong>Rate:</strong> <span data-i18n-key="lfo.parameters.rate"></span></li>
+            <li><strong>Depth:</strong> <span data-i18n-key="lfo.parameters.depth"></span></li>
+            <li><strong>Attack:</strong> <span data-i18n-key="lfo.parameters.attack"></span></li>
+          </ul>
+        </div>
+
+        <div class="module-section io-section">
+          <div>
+            <h3 data-i18n-key="lfo.inputs_title"></h3>
+            <ul>
+              <li><strong>Rate CV:</strong> <span data-i18n-key="lfo.inputs.rate_cv"></span></li>
+              <li><strong>Depth CV:</strong> <span data-i18n-key="lfo.inputs.depth_cv"></span></li>
+              <li><strong>Gate:</strong> <span data-i18n-key="lfo.inputs.gate"></span></li>
+            </ul>
+          </div>
+          <div>
+            <h3 data-i18n-key="lfo.outputs_title"></h3>
+            <ul>
+              <li><strong>Out:</strong> <span data-i18n-key="lfo.outputs.out"></span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </article>
+
+  </main>
 </Layout>
 
 <style>
   .page-content {
-    text-align: center;
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    color: var(--color-text);
   }
-  a {
+
+  h1 {
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 2.5rem;
+  }
+
+  .module-card {
+    background-color: #333;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .module-title {
+    font-family: var(--font-family-headings);
+    color: var(--color-accent-1);
+    font-size: 2rem;
+    margin: 0 0 0.25rem 0;
+  }
+
+  .module-subtitle {
+    font-family: var(--font-family-body);
+    font-style: italic;
+    color: var(--color-accent-2);
+    margin: 0 0 1.5rem 0;
+    font-size: 1.2rem;
+  }
+
+  .module-description {
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+
+  .module-details {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .module-section h3 {
+    color: var(--color-accent-2);
+    border-bottom: 1px solid var(--color-accent-1);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .module-section ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .module-section li {
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+  }
+
+  .module-section li strong {
     color: var(--color-accent-1);
   }
+
+  .io-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
 </style>

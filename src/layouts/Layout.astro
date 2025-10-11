@@ -1,5 +1,6 @@
 ---
 import LanguageSwitcher from '../components/LanguageSwitcher.astro';
+import { ViewTransitions } from 'astro:transitions';
 
 interface Props {
 	title: string;
@@ -17,6 +18,7 @@ const currentYear = new Date().getFullYear();
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title data-i18n-key="page.title">{title}</title>
+    <ViewTransitions />
 
 		<!-- Google Fonts -->
 		<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -71,67 +73,109 @@ const currentYear = new Date().getFullYear();
   }
 </style>
 
-<script>
+<script is:inline>
   // The full audio script from the previous step remains here
-  document.addEventListener('DOMContentLoaded', () => {
-    let audioContext;
-    try {
-      audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      window.audioContext = audioContext;
-    } catch (e) {
-      console.error('Web Audio API is not supported');
-      const muteButton = document.getElementById('mute-button');
-      if(muteButton) muteButton.style.display = 'none';
+  document.addEventListener('astro:page-load', () => {
+    if (window.audioManager && window.audioManager.isInitialized) {
+      window.audioManager.updateButtonState();
       return;
     }
-    const muteButton = document.getElementById('mute-button');
-    const iconUnmuted = document.getElementById('icon-unmuted');
-    const iconMuted = document.getElementById('icon-muted');
-    if (!muteButton || !iconUnmuted || !iconMuted) return;
-    const masterGain = audioContext.createGain();
-    masterGain.gain.value = 0;
-    masterGain.connect(audioContext.destination);
-    const loopSource = audioContext.createBufferSource();
-    let isReadyToPlay = false;
-    let hasStarted = false;
-    let isMuted = true;
-    const savedMuteState = localStorage.getItem('isMuted');
-    isMuted = savedMuteState === null ? true : JSON.parse(savedMuteState);
-    fetch('/audio/loop_1.mp3').then(response => {
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        return response.arrayBuffer();
-      }).then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer)).then(audioBuffer => {
-        loopSource.buffer = audioBuffer;
-        loopSource.loop = true;
-        loopSource.connect(masterGain);
-        isReadyToPlay = true;
-      }).catch(e => {
-        console.error(`Error loading audio file: ${e}`);
-        muteButton.style.display = 'none';
-      });
-    function toggleMute(shouldBeMuted) {
-        if (!masterGain) return;
-        isMuted = shouldBeMuted;
-        localStorage.setItem('isMuted', JSON.stringify(isMuted));
-        const newGain = isMuted ? 0 : 0.4;
-        masterGain.gain.setTargetAtTime(newGain, audioContext.currentTime, 0.4);
-        iconUnmuted.style.display = isMuted ? 'none' : 'block';
-        iconMuted.style.display = isMuted ? 'block' : 'none';
-    }
-    muteButton.addEventListener('click', () => {
-      if (!isReadyToPlay) return;
-      if (audioContext.state === 'suspended') {
-        audioContext.resume();
+
+    window.audioManager = {
+      audioContext: null,
+      masterGain: null,
+      loopSource: null,
+      isReadyToPlay: false,
+      hasStarted: false,
+      isMuted: true,
+      isInitialized: false,
+
+      init() {
+        try {
+          this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          window.audioContext = this.audioContext; // For other scripts
+        } catch (e) {
+          console.error('Web Audio API is not supported');
+          const muteButton = document.getElementById('mute-button');
+          if(muteButton) muteButton.style.display = 'none';
+          return;
+        }
+
+        this.masterGain = this.audioContext.createGain();
+        this.masterGain.gain.value = 0;
+        this.masterGain.connect(this.audioContext.destination);
+
+        this.loopSource = this.audioContext.createBufferSource();
+        
+        const savedMuteState = localStorage.getItem('isMuted');
+        this.isMuted = savedMuteState === null ? true : JSON.parse(savedMuteState);
+
+        fetch('/audio/loop_1.mp3')
+          .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.arrayBuffer();
+          })
+          .then(arrayBuffer => this.audioContext.decodeAudioData(arrayBuffer))
+          .then(audioBuffer => {
+            this.loopSource.buffer = audioBuffer;
+            this.loopSource.loop = true;
+            this.loopSource.connect(this.masterGain);
+            this.isReadyToPlay = true;
+          })
+          .catch(e => {
+            console.error(`Error loading audio file: ${e}`);
+            const muteButton = document.getElementById('mute-button');
+            if(muteButton) muteButton.style.display = 'none';
+          });
+        
+        this.isInitialized = true;
+        this.attachButtonListener();
+        this.updateButtonState();
+      },
+
+      toggleMute(shouldBeMuted) {
+        if (!this.masterGain) return;
+        this.isMuted = shouldBeMuted;
+        localStorage.setItem('isMuted', JSON.stringify(this.isMuted));
+        const newGain = this.isMuted ? 0 : 0.4;
+        this.masterGain.gain.setTargetAtTime(newGain, this.audioContext.currentTime, 0.4);
+        this.updateButtonState();
+      },
+
+      updateButtonState() {
+        const iconUnmuted = document.getElementById('icon-unmuted');
+        const iconMuted = document.getElementById('icon-muted');
+        if (!iconUnmuted || !iconMuted) return;
+        iconUnmuted.style.display = this.isMuted ? 'none' : 'block';
+        iconMuted.style.display = this.isMuted ? 'block' : 'none';
+      },
+
+      attachButtonListener() {
+        const muteButton = document.getElementById('mute-button');
+        if (!muteButton) return;
+
+        // Remove old listener to prevent duplicates
+        muteButton.removeEventListener('click', this.handleMuteClick);
+        // Bind 'this' to ensure correct context
+        this.handleMuteClick = this.handleMuteClick.bind(this);
+        muteButton.addEventListener('click', this.handleMuteClick);
+      },
+
+      handleMuteClick() {
+        if (!this.isReadyToPlay) return;
+        if (this.audioContext.state === 'suspended') {
+          this.audioContext.resume();
+        }
+        if (!this.hasStarted) {
+          this.loopSource.start(0);
+          this.hasStarted = true;
+          this.toggleMute(false);
+        } else {
+          this.toggleMute(!this.isMuted);
+        }
       }
-      if (!hasStarted) {
-        loopSource.start(0);
-        hasStarted = true;
-        toggleMute(false);
-      } else {
-        toggleMute(!isMuted);
-      }
-    });
-    iconUnmuted.style.display = isMuted ? 'none' : 'block';
-    iconMuted.style.display = isMuted ? 'block' : 'none';
+    };
+
+    window.audioManager.init();
   });
 </script>
