@@ -127,6 +127,19 @@ const images = [
     }
 
     // --- Animation & Audio Logic ---
+    let blipOsc, blipGain;
+
+    function setupBlip() {
+      if (!window.audioContext || blipOsc) return;
+      const audioContext = window.audioContext;
+      blipOsc = audioContext.createOscillator();
+      blipGain = audioContext.createGain();
+      blipOsc.type = 'sine';
+      blipOsc.connect(blipGain);
+      blipGain.connect(audioContext.destination);
+      blipOsc.start();
+    }
+
     function decayPeak() {
       if (peakAmplitude > 0) {
         peakAmplitude = Math.max(0, peakAmplitude - 2.5);
@@ -134,19 +147,16 @@ const images = [
         requestAnimationFrame(decayPeak);
       }
     }
+
     function playMenuBlip(freq = 440) {
       if (!window.audioContext) return;
+      setupBlip();
       const audioContext = window.audioContext;
-      const osc = audioContext.createOscillator();
-      const gain = audioContext.createGain();
-      osc.connect(gain);
-      gain.connect(audioContext.destination);
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, audioContext.currentTime);
-      gain.gain.setValueAtTime(0.2, audioContext.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.2);
-      osc.start(audioContext.currentTime);
-      osc.stop(audioContext.currentTime + 0.2);
+      blipOsc.frequency.cancelScheduledValues(audioContext.currentTime);
+      blipOsc.frequency.setValueAtTime(freq, audioContext.currentTime);
+      blipGain.gain.cancelScheduledValues(audioContext.currentTime);
+      blipGain.gain.setValueAtTime(0.2, audioContext.currentTime);
+      blipGain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.2);
     }
 
     // --- Knob Logic ---
