@@ -51,6 +51,21 @@ const t = useTranslations(lang);
     </div>
 
   </main>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('.modules-sidebar nav a');
+    
+    navLinks.forEach(link => {
+      const linkPath = link.getAttribute('href');
+      if (linkPath === currentPath) {
+        link.classList.add('active');
+      }
+    });
+  });
+</script>
+
 </Layout>
 
 <style>
@@ -119,6 +134,12 @@ const t = useTranslations(lang);
   .modules-sidebar nav a:hover {
     background-color: var(--color-accent-1);
     color: #1a1a1a;
+  }
+
+  .modules-sidebar nav a.active {
+    color: #ffffff;
+    font-weight: bold;
+    background-color: var(--color-accent-1);
   }
 
   .modules-content {
