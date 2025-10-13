@@ -24,6 +24,10 @@ export const ui = {
     "footer.rights": "Todos os dereitos reservados.",
     "module_group.audio_and_control_modulators":
       "Moduladores de Audio e Control",
+    "module_group.effects_modules": "Módulos de Efectos",
+    "module_group.sequencing_modules": "Módulos de Secuenciación",
+    "module_group.audio_oscillators": "Módulos de Audio e Osciladores",
+    "module_group.logic_maths": "Módulos de Lóxica e Matemáticas",
     "modules_menu.title": "Categorías de Módulos",
     "mechanics.title": "Mecánica e Modo de Uso do Sintetizador",
     "mechanics.intro":
@@ -234,6 +238,10 @@ export const ui = {
     "footer.rights": "Todos los derechos reservados.",
     "module_group.audio_and_control_modulators":
       "Moduladores de Audio y Control",
+    "module_group.effects_modules": "Módulos de Efectos",
+    "module_group.sequencing_modules": "Módulos de Secuenciación",
+    "module_group.audio_oscillators": "Módulos de Audio e Osciladores",
+    "module_group.logic_maths": "Módulos de Lóxica e Matemáticas",
     "modules_menu.title": "Categorías de Módulos",
     "mechanics.title": "Mecánica y Modo de Uso del Sintetizador",
     "mechanics.intro":
@@ -443,6 +451,11 @@ export const ui = {
     "nav.support": "Support",
     "footer.rights": "All Rights Reserved.",
     "module_group.audio_and_control_modulators": "Audio and Control Modulators",
+    "module_group.effects_modules": "Effects Modules",
+    "module_group.sequencing_modules": "Sequencing Modules",
+    "module_group.audio_oscillators": "Audio and Oscillator Modules",
+    "module_group.logic_maths": "Logic and Maths Modules",
+    'module_group.initial_base_modules': 'Initial Base Modules',
     "modules_menu.title": "Module Categories",
     "mechanics.title": "Synthesizer Mechanics and Usage",
     "mechanics.intro":

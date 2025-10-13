@@ -1,0 +1,235 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { getLangFromUrl, useTranslations } from "../i18n/utils";
+import { moduleCategories, type ModuleCategory } from "../i18n/modules";
+import { ui } from '../i18n/ui';
+
+export function getStaticPaths() {
+  return moduleCategories.map(category => {
+    const categoryName = ui.gl[category.nameKey] || category.nameKey;
+    const categorySlug = categoryName.toLowerCase().replace(/[\s&]+/g, "-");
+    return {
+      params: { category: categorySlug }
+    };
+  });
+}
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const { category: categorySlug } = Astro.params;
+
+function categoryNameToUrl(categoryName: string): string {
+  return categoryName.toLowerCase().replace(/[\s&]+/g, "-");
+}
+
+const currentCategory: ModuleCategory | undefined = moduleCategories.find(
+  (cat) => categoryNameToUrl(t(cat.nameKey)) === categorySlug
+);
+
+if (!currentCategory) {
+  return Astro.redirect("/404");
+}
+---
+
+<Layout title={t(currentCategory.nameKey)}>
+  <main class="page-content">
+    <h1 data-i18n-key="nav.modules">{t("nav.modules")}</h1>
+
+    <div class="modules-container">
+      <aside class="modules-sidebar">
+        <h2 class="sidebar-title" data-i18n-key="modules_menu.title">
+          {t("modules_menu.title")}
+        </h2>
+        <nav>
+          <ul>
+            {
+              moduleCategories.map((category) => (
+                <li>
+                  <a
+                    href={`/modules/${categoryNameToUrl(t(category.nameKey))}`}
+                    data-i18n-key={category.nameKey}
+                    class:list={{
+                      active: category.nameKey === currentCategory.nameKey,
+                    }}
+                  >
+                    {t(category.nameKey)}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+      </aside>
+
+      <section class="modules-content">
+        <h2 class="category-title" data-i18n-key={currentCategory.nameKey}>
+          {t(currentCategory.nameKey)}
+        </h2>
+        <div class="module-list">
+          {
+            currentCategory.modules.map((module) => (
+              <div class="module-card" id={module.id}>
+                <h3 class="module-name" data-i18n-key={module.nameKey}>
+                  {t(module.nameKey)}
+                </h3>
+                <p
+                  class="module-description"
+                  data-i18n-key={module.descriptionKey}
+                >
+                  {t(module.descriptionKey)}
+                </p>
+                <a
+                  href={`/modules/${module.id}`}
+                  class="module-link"
+                  data-i18n-key="module.read_more"
+                >
+                  {t("module.read_more")}
+                </a>
+              </div>
+            ))
+          }
+        </div>
+      </section>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .page-content {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    color: var(--color-text);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 2.5rem;
+    width: 100%;
+  }
+
+  .modules-container {
+    display: flex;
+    width: 100%;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .modules-sidebar {
+    flex: 0 0 250px;
+    background-color: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 1.5rem;
+    height: fit-content;
+  }
+
+  .sidebar-title {
+    font-family: var(--font-family-headings);
+    color: var(--color-primary);
+    font-size: 1.8rem;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--color-accent-1);
+    padding-bottom: 0.5rem;
+  }
+
+  .modules-sidebar nav ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .modules-sidebar nav li {
+    margin-bottom: 0.75rem;
+  }
+
+  .modules-sidebar nav a {
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: 1.1rem;
+    display: block;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  .modules-sidebar nav a:hover {
+    background-color: var(--color-accent-1);
+    color: #1a1a1a;
+  }
+
+  .modules-sidebar nav a.active {
+    color: #ffffff;
+    font-weight: bold;
+    background-color: var(--color-accent-1);
+  }
+
+  .modules-content {
+    flex: 1;
+  }
+
+  .category-title {
+    font-size: 2.2rem;
+    color: var(--color-accent-1);
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #555;
+    padding-bottom: 0.5rem;
+  }
+
+  .module-list {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .module-card {
+    background-color: #333;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition:
+      transform 0.2s,
+      box-shadow 0.2s;
+  }
+
+  .module-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+
+  .module-name {
+    font-size: 1.5rem;
+    color: var(--color-accent-2);
+    margin: 0 0 0.5rem 0;
+  }
+
+  .module-description {
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  .module-link {
+    color: var(--color-accent-1);
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  .module-link:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .page-content,
+    .modules-container {
+      flex-direction: column;
+    }
+    .modules-sidebar {
+      flex: none;
+      width: 100%;
+    }
+  }
+</style>

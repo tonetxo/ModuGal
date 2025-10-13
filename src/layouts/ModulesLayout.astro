@@ -1,38 +1,54 @@
 ---
-import ModulesLayout from '../layouts/ModulesLayout.astro';
+import Layout from './Layout.astro';
 import { getLangFromUrl, useTranslations } from '../i18n/utils';
 
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
 ---
 
-<ModulesLayout title={t('mechanics.title')}>
-  <p data-i18n-key="mechanics.intro">{t('mechanics.intro')}</p>
+<Layout title={t('nav.modules')}>
+  <main class="page-content">
+    <div class="modules-container">
+      <aside class="modules-sidebar">
+        <h2 class="sidebar-title" data-i18n-key="modules_menu.title">{t('modules_menu.title')}</h2>
+        <nav>
+          <ul>
+            <li><a href="/modulos/initial-base" data-i18n-key="module_group.initial_base_modules">{t('module_group.initial_base_modules')}</a></li>
+            <li><a href="/modulos/audio-control" data-i18n-key="module_group.audio_and_control_modulators">{t('module_group.audio_and_control_modulators')}</a></li>
+            <li><a href="/modulos/effects" data-i18n-key="module_group.effects_modules">{t('module_group.effects_modules')}</a></li>
+            <li><a href="/modulos/sequencing" data-i18n-key="module_group.sequencing_modules">{t('module_group.sequencing_modules')}</a></li>
+            <li><a href="/modulos/audio-oscillators" data-i18n-key="module_group.audio_oscillators">{t('module_group.audio_oscillators')}</a></li>
+            <li><a href="/modulos/logic-maths" data-i18n-key="module_group.logic_maths">{t('module_group.logic_maths')}</a></li>
+            <!-- Other module categories will go here -->
+          </ul>
+        </nav>
+      </aside>
+      <section class="modules-content">
+        <h1>{title}</h1>
+        <slot />
+      </section>
+    </div>
 
-  <h3 data-i18n-key="mechanics.wiring_title">{t('mechanics.wiring_title')}</h3>
-  <p data-i18n-key="mechanics.wiring_description">{t('mechanics.wiring_description')}</p>
+  </main>
 
-  <h3 data-i18n-key="mechanics.context_menu_title">{t('mechanics.context_menu_title')}</h3>
-  <p data-i18n-key="mechanics.context_menu_description">{t('mechanics.context_menu_description')}</p>
-
-  <h3 data-i18n-key="mechanics.module_interaction_title">{t('mechanics.module_interaction_title')}</h3>
-  <p data-i18n-key="mechanics.module_interaction_description">{t('mechanics.module_interaction_description')}</p>
-
-  <h3 data-i18n-key="mechanics.app_menu_title">{t('mechanics.app_menu_title')}</h3>
-  <p data-i18n-key="mechanics.app_menu_description">{t('mechanics.app_menu_description')}</p>
-  <ul>
-    <li><span data-i18n-key="mechanics.app_menu.file_save_load" set:html={t('mechanics.app_menu.file_save_load')}></span></li>
-    <li><span data-i18n-key="mechanics.app_menu.edit_undo_redo" set:html={t('mechanics.app_menu.edit_undo_redo')}></span></li>
-    <li><span data-i18n-key="mechanics.app_menu.view_visualizer" set:html={t('mechanics.app_menu.view_visualizer')}></span></li>
-    <li><span data-i18n-key="mechanics.app_menu.themes" set:html={t('mechanics.app_menu.themes')}></span></li>
-    <li><span data-i18n-key="mechanics.app_menu.midi" set:html={t('mechanics.app_menu.midi')}></span></li>
-    <li><span data-i18n-key="mechanics.app_menu.license" set:html={t('mechanics.app_menu.license')}></span></li>
-  </ul>
-
-  <h3 data-i18n-key="mechanics.module_specific_actions_title">{t('mechanics.module_specific_actions_title')}</h3>
-  <p data-i18n-key="mechanics.module_specific_actions_description">{t('mechanics.module_specific_actions_description')}</p>
-  <!-- Detailed mechanics descriptions will go here -->
-</ModulesLayout>
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('.modules-sidebar nav a');
+    
+    navLinks.forEach(link => {
+      const linkPath = link.getAttribute('href');
+      if (linkPath === currentPath) {
+        link.classList.add('active');
+      }
+    });
+  });
+</script>
 
 <style>
   .page-content {

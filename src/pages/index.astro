@@ -16,7 +16,7 @@ const images = [
 ];
 ---
 
-<Layout title="ModuGal - Sintetizador Modular Virtual">
+<Layout title="ModuGal - Sintetizador Modular Virtual" isHomepage={true}>
   <div class="main-grid">
     <svg id="sine-wave-svg" class="background-wave">
       <path id="sine-wave-path-1"></path>
@@ -33,6 +33,7 @@ const images = [
     </div>
 
     <main>
+     
       <div class="container">
         <header>
           <h1>ModuGal</h1>
@@ -42,6 +43,7 @@ const images = [
           {
             images.map((image, index) => (
               <img
+           
                 src={image.src}
                 alt={image.alt}
                 class={`slideshow-image ${index === 0 ? "visible" : ""}`}
@@ -50,7 +52,8 @@ const images = [
           }
         </div>
         <div class="content">
-          <p class="tagline" data-i18n-key="tagline">
+   
+           <p class="tagline" data-i18n-key="tagline">
             El taller del inventor sónico. Esculpe tus paisajes sonoros con una
             precisión de otra era.
           </p>
@@ -61,6 +64,7 @@ const images = [
             <a href="#" class="button secondary" data-i18n-key="button.demo"
               >Descargar Demo</a
             >
+  
           </div>
         </div>
       </div>
@@ -115,7 +119,6 @@ const images = [
     gap: 1.5rem;
     width: 100%;
     height: 100%;
-    transform: translateY(-40px);
   }
   .menu-title-area {
     display: flex;
@@ -331,15 +334,7 @@ const images = [
 
 <script>
   import { ui, defaultLang } from "../i18n/ui";
-
-  // --- Cleanup function to remove old event listeners ---
-  function cleanupHomePage() {
-    // We'll add cleanup logic here if needed in the future,
-    // for now, re-running init is handled by the page-load event.
-  }
-
   function initHomePage() {
-    // --- Global State & Elements ---
     const svg = document.getElementById(
       "sine-wave-svg"
     ) as SVGSVGElement | null;
@@ -355,57 +350,38 @@ const images = [
     let blipGain: GainNode | null = null;
     let currentLang = defaultLang;
 
-    // --- Sine Wave Logic ---
     function updateSineWaves() {
       if (!sinePath1 || !sinePath2 || !svg) return;
-
       const svgWidth = svg.clientWidth;
       const svgHeight = svg.clientHeight;
       const yOffset = svgHeight / 2;
-
-      // Si el knob está a cero, vaciamos las ondas y terminamos.
       if (currentAngle < 5) {
-        // Pequeño umbral para que no desaparezca inmediatamente
         sinePath1.setAttribute("d", "");
         sinePath2.setAttribute("d", "");
         return;
       }
-
-      // Parámetros de la forma de la onda
       const baseAmplitude = 30;
       const totalAmplitude = baseAmplitude + peakAmplitude;
       const frequency = 0.05;
       const vibratoFrequency = 0.4;
       const currentVibratoAmplitude = (peakAmplitude / 50) * 8;
-
-      // Puntos de inicio de las ondas (izquierda y derecha)
       const startLeft = svgWidth * 0.24;
       const startRight = svgWidth * 0.75;
-
-      // La longitud de la onda ahora se calcula en base al giro del knob
       const waveLength = startLeft * 0.95 * (currentAngle / 270);
-
       let pathData1 = `M ${startLeft} ${yOffset}`;
       let pathData2 = `M ${startRight} ${yOffset}`;
-
-      // Bucle único para generar los puntos de la onda
       for (let x = 0; x <= waveLength; x++) {
         const mainWave = Math.sin(x * frequency) * totalAmplitude;
         const vibrato =
           Math.sin(x * vibratoFrequency) * currentVibratoAmplitude;
         const y = yOffset + mainWave + vibrato;
-
-        // Añadimos el punto a la onda izquierda (hacia la izquierda)
         pathData1 += ` L ${startLeft - x} ${y}`;
-        // Añadimos el punto a la onda derecha (hacia la derecha)
         pathData2 += ` L ${startRight + x} ${y}`;
       }
-
       sinePath1.setAttribute("d", pathData1);
       sinePath2.setAttribute("d", pathData2);
     }
 
-    // --- Audio Context Initialization ---
     function initAudioContext() {
       if (window.audioContext) return;
       try {
@@ -416,17 +392,14 @@ const images = [
       }
     }
 
-    // --- Animation & Audio Logic ---
     function setupBlip() {
       if (!window.audioContext || blipOsc) return;
       blipOsc = window.audioContext.createOscillator();
       blipGain = window.audioContext.createGain();
-      blipGain.gain.value = 0; // Inicia el volumen a 0 para evitar el pitido inicial
+      blipGain.gain.value = 0;
       blipOsc.connect(blipGain).connect(window.audioContext.destination);
       blipOsc.start();
     }
-
-    // ...existing code...
 
     function decayPeak() {
       if (peakAmplitude > 0) {
@@ -449,7 +422,6 @@ const images = [
       );
     }
 
-    // --- Knob Logic ---
     const knob = document.getElementById("nav-knob");
     if (knob) {
       const knobCenter = knob.querySelector(
@@ -469,7 +441,6 @@ const images = [
         startY = 0,
         lastAngle = 0,
         selectedIndex = 0;
-
       function updateMenu() {
         const totalItems = menuItems.length;
         const anglePerItem = 270 / (totalItems - 1);
@@ -479,8 +450,8 @@ const images = [
           peakAmplitude = 50;
           decayPeak();
           if (knobCenter) {
-            knobCenter.classList.remove("flash"); // Remove to restart animation
-            void knobCenter.offsetWidth; // Trigger reflow
+            knobCenter.classList.remove("flash");
+            void knobCenter.offsetWidth;
             knobCenter.classList.add("flash");
           }
         }
@@ -500,14 +471,13 @@ const images = [
           updateMenu();
         }
       });
-
       knob.addEventListener("mousedown", (e: MouseEvent) => {
         e.preventDefault();
         isDraggingKnob = true;
         startY = e.clientY;
         lastAngle = currentAngle;
-        initAudioContext(); // Initialize audio on first interaction
-        if (!blipOsc) setupBlip(); // Setup oscillator if not already done
+        initAudioContext();
+        if (!blipOsc) setupBlip();
         if (knobRing) knobRing.style.transition = "none";
       });
       window.addEventListener("mousemove", (e: MouseEvent) => {
@@ -526,14 +496,15 @@ const images = [
       knob.addEventListener("click", () => {
         if (Math.abs(lastAngle - currentAngle) > 5) return;
         const targetPath = menuItems[selectedIndex].path;
-        // Simple navigation is enough now that we handle page loads correctly.
+        
+        if (window.location.pathname === targetPath) return;
+
         window.location.href = targetPath;
       });
       updateMenu();
       updateSineWaves();
     }
 
-    // --- Slideshow Logic ---
     const slideshowContainer = document.querySelector(".slideshow-container");
     if (slideshowContainer) {
       const images = slideshowContainer.querySelectorAll(
@@ -617,10 +588,6 @@ const images = [
     }
   }
 
-  // --- Astro Page Load Event Listener ---
-  // This is the correct way to run scripts with Astro View Transitions.
-  // It runs on initial load and after every page navigation.
   document.addEventListener("astro:page-load", initHomePage);
-  // Initial call for the very first load without transitions.
   initHomePage();
 </script>

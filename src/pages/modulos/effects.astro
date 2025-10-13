@@ -1,0 +1,15 @@
+---
+import ModulesLayout from '../../layouts/ModulesLayout.astro';
+import { getLangFromUrl, useTranslations } from '../../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<ModulesLayout title={t('module_group.effects_modules')}>
+    <article class="module-card">
+        <p>Aquí aparecerán as descricións dos módulos de efectos.</p>
+    </article>
+</ModulesLayout>
+
+

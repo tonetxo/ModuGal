@@ -13,14 +13,14 @@ const currentYear = new Date().getFullYear();
 <html lang="gl">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="description" content="O obradoiro do inventor sónico." data-i18n-key="page.description" />
+		<meta name="description" content="O obradoiro do inventor sónico."
+ data-i18n-key="page.description" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<meta name="generator" content={Astro.generator} />
 		<title data-i18n-key="page.title">{title}</title>
     <ViewTransitions />
 
-		<!-- Google Fonts -->
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
@@ -47,15 +47,69 @@ const currentYear = new Date().getFullYear();
 </html>
 
 <style is:global>
-  @font-face { font-family: 'Castelao'; src: url('/fonts/Castelao.woff2') format('woff2'); font-weight: normal; font-style: normal; font-display: swap; }
-	:root { --color-base: #2a2a2a; --color-text: #e0e0e0; --color-accent-1: #b87333; --color-accent-2: #e1c16e; --font-family-headings: 'Playfair Display', serif; --font-family-body: 'Source Sans Pro', sans-serif; }
-	html { font-family: var(--font-family-body); background-color: var(--color-base); color: var(--color-text); }
-	body { margin: 0; box-sizing: border-box; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
-	h1, h2, h3, h4 { font-family: var(--font-family-headings); color: var(--color-accent-2); margin: 0; }
-  .sound-controls { position: fixed; top: 1rem; left: 1rem; z-index: 100; display: flex; gap: 0.5rem; }
-  .nav-button { background: transparent; border: 1px solid var(--color-accent-2); color: var(--color-accent-2); cursor: pointer; border-radius: 50%; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; opacity: 0.7; transition: all 0.2s ease; padding: 0; }
-  .nav-button:hover { opacity: 1; background-color: var(--color-accent-2); color: var(--color-base); }
-  .nav-button svg { width: 24px; height: 24px; }
+  @font-face { 
+    font-family: 'Castelao';
+    src: url('/fonts/Castelao.woff2') format('woff2'); 
+    font-weight: normal; 
+    font-style: normal; 
+    font-display: swap; 
+  }
+	:root { 
+    --color-base: #2a2a2a; 
+    --color-text: #e0e0e0; 
+    --color-accent-1: #b87333; 
+    --color-accent-2: #e1c16e; 
+    --font-family-headings: 'Playfair Display', serif; 
+    --font-family-body: 'Source Sans Pro', sans-serif; 
+  }
+	html { 
+    font-family: var(--font-family-body); 
+    background-color: var(--color-base); 
+    color: var(--color-text);
+  }
+	body { 
+    margin: 0; 
+    box-sizing: border-box; 
+    min-height: 100vh;
+    /* Las propiedades de centrado global han sido eliminadas para evitar el salto */
+  }
+	h1, h2, h3, h4 { 
+    font-family: var(--font-family-headings); 
+    color: var(--color-accent-2); 
+    margin: 0; 
+  }
+  .sound-controls { 
+    position: fixed; 
+    top: 1rem;
+    left: 1rem; 
+    z-index: 100; 
+    display: flex; 
+    gap: 0.5rem; 
+  }
+  .nav-button { 
+    background: transparent; 
+    border: 1px solid var(--color-accent-2); 
+    color: var(--color-accent-2);
+    cursor: pointer; 
+    border-radius: 50%; 
+    width: 40px; 
+    height: 40px; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    opacity: 0.7; 
+    transition: all 0.2s ease;
+    padding: 0; 
+  }
+  .nav-button:hover { 
+    opacity: 1; 
+    background-color: var(--color-accent-2); 
+    color: var(--color-base); 
+  }
+  .nav-button svg { 
+    width: 24px;
+    height: 24px; 
+  }
   footer {
     position: fixed;
     bottom: 0;
@@ -67,12 +121,12 @@ const currentYear = new Date().getFullYear();
     color: var(--color-text);
     opacity: 0.6;
     z-index: 100;
-    pointer-events: none; /* Allow clicks to pass through */
+    pointer-events: none;
   }
   footer a {
     color: var(--color-accent-2);
     text-decoration: none;
-    pointer-events: all; /* Make links clickable */
+    pointer-events: all;
   }
   footer a:hover {
     text-decoration: underline;
@@ -83,7 +137,7 @@ const currentYear = new Date().getFullYear();
   document.addEventListener('astro:page-load', () => {
     // Si el manager de audio ya existe, solo necesita reinicializar los botones
     if (window.audioManager && window.audioManager.isInitialized) {
-      window.audioManager.attachButtonListener(); // <-- ESTA LÍNEA ES LA CLAVE
+      window.audioManager.attachButtonListener();
       window.audioManager.updateButtonState();
     } else {
       // Si no existe, se crea por primera vez
@@ -110,12 +164,10 @@ const currentYear = new Date().getFullYear();
           this.masterGain = this.audioContext.createGain();
           this.masterGain.gain.value = 0;
           this.masterGain.connect(this.audioContext.destination);
-
           this.loopSource = this.audioContext.createBufferSource();
           
           const savedMuteState = localStorage.getItem('isMuted');
           this.isMuted = savedMuteState === null ? true : JSON.parse(savedMuteState);
-
           fetch('/audio/loop_1.mp3')
             .then(response => {
               if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -133,7 +185,6 @@ const currentYear = new Date().getFullYear();
               const muteButton = document.getElementById('mute-button');
               if(muteButton) muteButton.style.display = 'none';
             });
-          
           this.isInitialized = true;
           this.attachButtonListener();
           this.updateButtonState();
@@ -159,6 +210,7 @@ const currentYear = new Date().getFullYear();
         attachButtonListener() {
           const muteButton = document.getElementById('mute-button');
           if (!muteButton) return;
+          // Eliminar listener anterior para evitar duplicados
           muteButton.removeEventListener('click', this.handleMuteClick);
           this.handleMuteClick = this.handleMuteClick.bind(this);
           muteButton.addEventListener('click', this.handleMuteClick);
@@ -184,9 +236,10 @@ const currentYear = new Date().getFullYear();
     // --- Back Button ---
     const backButton = document.getElementById('back-button');
     if (backButton) {
-      backButton.addEventListener('click', () => {
-        window.history.back();
-      });
+      // Para evitar duplicados, es buena práctica remover el listener antes de añadirlo
+      const goBack = () => window.history.back();
+      backButton.removeEventListener('click', goBack);
+      backButton.addEventListener('click', goBack);
     }
   });
 </script>
