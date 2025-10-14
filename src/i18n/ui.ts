@@ -24,6 +24,9 @@ export const ui = {
     "footer.rights": "Todos os dereitos reservados.",
     "module_group.audio_and_control_modulators":
       "Moduladores de Audio e Control",
+    "module_group.audio_shapers_and_effects": "Efectos e Formadores de Onda",
+    "module_group.analysis_and_utilities": "Análise e Utilidades",
+    "module_group.sequencing_and_logic": "Secuenciación e Lóxica",
     "module_group.effects_modules": "Módulos de Efectos",
     "module_group.sequencing_modules": "Módulos de Secuenciación",
     "module_group.audio_oscillators": "Módulos de Audio e Osciladores",
@@ -59,6 +62,7 @@ export const ui = {
     "mechanics.module_specific_actions_title": "Accións Específicas de Módulo",
     "mechanics.module_specific_actions_description":
       "Algúns módulos poden ter accións adicionais accesibles a través de interaccións directas ou menús contextuais específicos do módulo (por exemplo, bypass, duplicar). Estas accións detallaranse nas descricións de cada módulo.",
+    "module_group.initial_base_modules": "Módulos Base Iniciais",
     "vco.subtitle": "Oscilador Controlado por Voltaxe",
     "vco.description":
       "O VCO é a fonte de son principal nun sintetizador modular. Xera un sinal de audio periódico (unha onda) cuxa frecuencia (ton) pode ser controlada por unha voltaxe externa, como a dun teclado ou un secuenciador. É o bloque de construción fundamental para crear calquera son.",
@@ -213,13 +217,30 @@ export const ui = {
       "Un sinal de disparo ou comporta que indica ao módulo cando mostrar a entrada.",
     "samplehold.outputs_title": "Saídas",
     "samplehold.outputs.out": "A voltaxe retida (CV) de saída.",
-    "module_group.initial_base_modules": "Módulos Base Iniciais",
     "output.subtitle": "Saída de Audio (Altofalantes)",
     "output.description":
       "O módulo de Saída de Audio representa os altofalantes do teu sistema. É o destino final de todos os sinais de audio xerados no sintetizador modular, convertendo as sinais eléctricas en son audible. Sen este módulo, non escoitarías nada!",
     "output.inputs_title": "Entradas",
     "output.inputs.in":
       "A entrada de audio principal para conectar o son final do sintetizador.",
+    "wavefolder.subtitle": "Plegador de Onda (Wavefolder)",
+    "wavefolder.description":
+      "O Wavefolder engade complexidade harmónica a un sinal de audio ao 'plegar' a forma de onda sobre si mesma cando supera un certo limiar, creando timbres ricos e metálicos.",
+    "delay.subtitle": "Delay (Eco)",
+    "delay.description":
+      "O Delay grava un sinal de entrada e repróduceo despois dun período de tempo axustable, creando efectos de eco e repeticións rítmicas.",
+    "reverb.subtitle": "Reverberación",
+    "reverb.description":
+      "A Reverberación simula o son dun espazo acústico, engadindo reflexións que dan profundidade e ambiente ao son.",
+    "compressor.subtitle": "Compresor",
+    "compressor.description":
+      "O Compresor reduce o rango dinámico dun sinal de audio, atenuando as partes máis fortes e/ou amplificando as máis suaves para un son máis controlado e cohesionado.",
+    "stereowidener.subtitle": "Ensanchador Estéreo",
+    "stereowidener.description":
+      "O Ensanchador Estéreo crea unha imaxe estéreo máis ampla a partir dun sinal mono ou estéreo, dando a sensación de que o son é máis grande e envolvente.",
+    "spectrumanalyzer.subtitle": "Analizador de Espectro",
+    "spectrumanalyzer.description":
+      "O Analizador de Espectro visualiza o contido de frecuencia dun sinal de audio en tempo real, permitindo ver que frecuencias están presentes e a súa intensidade.",
   },
   es: {
     "knob.menu": "Menú",
@@ -238,10 +259,13 @@ export const ui = {
     "footer.rights": "Todos los derechos reservados.",
     "module_group.audio_and_control_modulators":
       "Moduladores de Audio y Control",
+    "module_group.audio_shapers_and_effects": "Efectos y Formadores de Onda",
+    "module_group.analysis_and_utilities": "Análisis y Utilidades",
+    "module_group.sequencing_and_logic": "Secuenciación y Lógica",
     "module_group.effects_modules": "Módulos de Efectos",
     "module_group.sequencing_modules": "Módulos de Secuenciación",
-    "module_group.audio_oscillators": "Módulos de Audio e Osciladores",
-    "module_group.logic_maths": "Módulos de Lóxica e Matemáticas",
+    "module_group.audio_oscillators": "Módulos de Audio y Osciladores",
+    "module_group.logic_maths": "Módulos de Lógica y Matemáticas",
     "modules_menu.title": "Categorías de Módulos",
     "mechanics.title": "Mecánica y Modo de Uso del Sintetizador",
     "mechanics.intro":
@@ -269,10 +293,11 @@ export const ui = {
     "mechanics.app_menu.midi":
       "<strong>MIDI:</strong> Selecciona un dispositivo de entrada MIDI para controlar el sintetizador con hardware externo.",
     "mechanics.app_menu.license":
-      "<strong>Activar Licencia:</strong> Introduce tu clave de licenza para desbloquear todas las funciones de la aplicación.",
+      "<strong>Activar Licencia:</strong> Introduce tu clave de licencia para desbloquear todas las funciones de la aplicación.",
     "mechanics.module_specific_actions_title": "Acciones Específicas de Módulo",
     "mechanics.module_specific_actions_description":
       "Algunos módulos pueden tener acciones adicionales accesibles a través de interacciones directas o menús contextuales específicos del módulo (por ejemplo, bypass, duplicar). Estas acciones se detallarán en las descripciones de cada módulo.",
+    "module_group.initial_base_modules": "Módulos Base Iniciales",
     "vco.subtitle": "Oscilador Controlado por Voltaje",
     "vco.description":
       "El VCO es la fuente de sonido principal en un sintetizador modular. Genera una señal de audio periódica (una onda) cuya frecuencia (tono) puede ser controlada por un voltaje externo, como el de un teclado o un secuenciador. Es el bloque de construcción fundamental para crear cualquier sonido.",
@@ -309,7 +334,7 @@ export const ui = {
       'Entrada para modular el ancho de pulso (solo en onda cuadrada), creando el clásico sonido "PWM".',
     "vco.outputs.out": "La salida de audio principal del oscilador.",
     "keyboard.parameters.octave":
-      "Sube o baja el registro del teclado en octavas completas, permitíéndote acceder a un rango de notas más amplio, desde bajos profundos a agudos cristalinos.",
+      "Sube o baja el registro del teclado en octavas completas, permitiéndote acceder a un rango de notas más amplio, desde bajos profundos a agudos cristalinos.",
     "keyboard.parameters.glide":
       'Controla el tiempo que tarda una nota en deslizarse hasta la siguiente. Con valores bajos, las notas cambian instantáneamente. Con valores altos, se crea un efecto de "portamento" o "glissando" muy característico.',
     "keyboard.outputs.cv":
@@ -330,7 +355,7 @@ export const ui = {
     "vca.inputs.cv":
       "Entradas para el voltaje de control que modulará el volumen. Aquí es donde se conecta la salida de un ADSR o un LFO.",
     "vca.outputs.out":
-      "La salida de audio, con su volumen ya modulado por los señales de control.",
+      "La salida de audio, con su volumen ya modulado por las señales de control.",
     "adsr.subtitle": "Generador de Envolvente",
     "adsr.description":
       'El módulo ADSR es un generador de envolvente fundamental para dar forma dinámica al sonido. Recibe una señal de "Gate" (compuerta) y produce una señal de "CV" (Control de Voltaje) que modula parámetros de otros módulos a lo largo del tiempo. Permite controlar cuatro fases clave:',
@@ -427,13 +452,30 @@ export const ui = {
       "Una señal de disparo o compuerta que indica al módulo cuándo muestrear la entrada.",
     "samplehold.outputs_title": "Salidas",
     "samplehold.outputs.out": "El voltaje retenido (CV) de salida.",
-    "module_group.initial_base_modules": "Módulos Base Iniciales",
     "output.subtitle": "Salida de Audio (Altavoces)",
     "output.description":
       "El módulo de Salida de Audio representa los altavoces de tu sistema. Es el destino final de todas las señales de audio generadas en el sintetizador modular, convirtiendo las señales eléctricas en sonido audible. ¡Sin este módulo, no escucharías nada!",
     "output.inputs_title": "Entradas",
     "output.inputs.in":
       "La entrada de audio principal para conectar el sonido final del sintetizador.",
+    "wavefolder.subtitle": "Plegador de Onda (Wavefolder)",
+    "wavefolder.description":
+      "El Wavefolder añade complejidad armónica a una señal de audio al 'plegar' la forma de onda sobre sí misma cuando supera un cierto umbral, creando timbres ricos y metálicos.",
+    "delay.subtitle": "Delay (Eco)",
+    "delay.description":
+      "El Delay graba una señal de entrada y la reproduce después de un período de tiempo ajustable, creando efectos de eco y repeticiones rítmicas.",
+    "reverb.subtitle": "Reverberación",
+    "reverb.description":
+      "La Reverberación simula el sonido de un espacio acústico, añadiendo reflexiones que dan profundidad y ambiente al sonido.",
+    "compressor.subtitle": "Compresor",
+    "compressor.description":
+      "El Compresor reduce el rango dinámico de una señal de audio, atenuando las partes más fuertes y/o amplificando las más suaves para un sonido más controlado y cohesionado.",
+    "stereowidener.subtitle": "Ensanchador Estéreo",
+    "stereowidener.description":
+      "El Ensanchador Estéreo crea una imagen estéreo más amplia a partir de una señal mono o estéreo, dando la sensación de que el sonido es más grande y envolvente.",
+    "spectrumanalyzer.subtitle": "Analizador de Espectro",
+    "spectrumanalyzer.description":
+      "El Analizador de Espectro visualiza el contenido de frecuencia de una señal de audio en tiempo real, permitiendo ver qué frecuencias están presentes y su intensidad.",
   },
   en: {
     "knob.menu": "Menu",
@@ -450,12 +492,15 @@ export const ui = {
     "nav.demos": "Demos",
     "nav.support": "Support",
     "footer.rights": "All Rights Reserved.",
-    "module_group.audio_and_control_modulators": "Audio and Control Modulators",
+    "module_group.audio_and_control_modulators": "Audio & Control Modulators",
+    "module_group.audio_shapers_and_effects": "Wave Shapers & Effects",
+    "module_group.analysis_and_utilities": "Analysis & Utilities",
+    "module_group.sequencing_and_logic": "Sequencing & Logic",
     "module_group.effects_modules": "Effects Modules",
     "module_group.sequencing_modules": "Sequencing Modules",
-    "module_group.audio_oscillators": "Audio and Oscillator Modules",
-    "module_group.logic_maths": "Logic and Maths Modules",
-    'module_group.initial_base_modules': 'Initial Base Modules',
+    "module_group.audio_oscillators": "Audio & Oscillators Modules",
+    "module_group.logic_maths": "Logic & Maths Modules",
+    "module_group.initial_base_modules": "Initial Base Modules",
     "modules_menu.title": "Module Categories",
     "mechanics.title": "Synthesizer Mechanics and Usage",
     "mechanics.intro":
@@ -643,5 +688,23 @@ export const ui = {
     "output.inputs_title": "Inputs",
     "output.inputs.in":
       "The main audio input to connect the final synthesizer sound.",
+    "wavefolder.subtitle": "Wavefolder",
+    "wavefolder.description":
+      "The Wavefolder adds harmonic complexity to an audio signal by 'folding' the waveform back on itself when it exceeds a certain threshold, creating rich, metallic timbres.",
+    "delay.subtitle": "Delay",
+    "delay.description":
+      "The Delay records an input signal and plays it back after an adjustable period, creating echo effects and rhythmic repetitions.",
+    "reverb.subtitle": "Reverb",
+    "reverb.description":
+      "Reverb simulates the sound of an acoustic space, adding reflections that give depth and ambiance to the sound.",
+    "compressor.subtitle": "Compressor",
+    "compressor.description":
+      "The Compressor reduces the dynamic range of an audio signal, attenuating the loudest parts and/or boosting the quietest parts for a more controlled and cohesive sound.",
+    "stereowidener.subtitle": "Stereo Widener",
+    "stereowidener.description":
+      "The Stereo Widener creates a wider stereo image from a mono or stereo signal, giving the feeling that the sound is larger and more immersive.",
+    "spectrumanalyzer.subtitle": "Spectrum Analyzer",
+    "spectrumanalyzer.description":
+      "The Spectrum Analyzer visualizes the frequency content of an audio signal in real-time, allowing you to see which frequencies are present and their intensity.",
   },
 } as const;

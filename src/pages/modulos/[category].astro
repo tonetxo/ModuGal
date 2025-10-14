@@ -1,17 +1,13 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import { getLangFromUrl, useTranslations } from "../i18n/utils";
-import { moduleCategories, type ModuleCategory } from "../i18n/modules";
-import { ui } from '../i18n/ui';
+import Layout from "../../layouts/Layout.astro";
+import { getLangFromUrl, useTranslations } from "../../i18n/utils";
+import { moduleCategories, type ModuleCategory } from "../../i18n/modules";
+import { ui } from '../../i18n/ui';
 
 export function getStaticPaths() {
-  return moduleCategories.map(category => {
-    const categoryName = ui.gl[category.nameKey] || category.nameKey;
-    const categorySlug = categoryName.toLowerCase().replace(/[\s&]+/g, "-");
-    return {
-      params: { category: categorySlug }
-    };
-  });
+  return moduleCategories.map(category => ({
+    params: { category: category.slug }
+  }));
 }
 
 const lang = getLangFromUrl(Astro.url);
@@ -19,12 +15,8 @@ const t = useTranslations(lang);
 
 const { category: categorySlug } = Astro.params;
 
-function categoryNameToUrl(categoryName: string): string {
-  return categoryName.toLowerCase().replace(/[\s&]+/g, "-");
-}
-
 const currentCategory: ModuleCategory | undefined = moduleCategories.find(
-  (cat) => categoryNameToUrl(t(cat.nameKey)) === categorySlug
+  (cat) => cat.slug === categorySlug
 );
 
 if (!currentCategory) {
@@ -47,7 +39,7 @@ if (!currentCategory) {
               moduleCategories.map((category) => (
                 <li>
                   <a
-                    href={`/modules/${categoryNameToUrl(t(category.nameKey))}`}
+                    href={`/modulos/${category.slug}`}
                     data-i18n-key={category.nameKey}
                     class:list={{
                       active: category.nameKey === currentCategory.nameKey,

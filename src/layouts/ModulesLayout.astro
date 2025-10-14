@@ -1,6 +1,7 @@
 ---
 import Layout from './Layout.astro';
 import { getLangFromUrl, useTranslations } from '../i18n/utils';
+import { moduleCategories } from '../i18n/modules';
 
 interface Props {
   title: string;
@@ -18,13 +19,15 @@ const t = useTranslations(lang);
         <h2 class="sidebar-title" data-i18n-key="modules_menu.title">{t('modules_menu.title')}</h2>
         <nav>
           <ul>
-            <li><a href="/modulos/initial-base" data-i18n-key="module_group.initial_base_modules">{t('module_group.initial_base_modules')}</a></li>
-            <li><a href="/modulos/audio-control" data-i18n-key="module_group.audio_and_control_modulators">{t('module_group.audio_and_control_modulators')}</a></li>
-            <li><a href="/modulos/effects" data-i18n-key="module_group.effects_modules">{t('module_group.effects_modules')}</a></li>
-            <li><a href="/modulos/sequencing" data-i18n-key="module_group.sequencing_modules">{t('module_group.sequencing_modules')}</a></li>
-            <li><a href="/modulos/audio-oscillators" data-i18n-key="module_group.audio_oscillators">{t('module_group.audio_oscillators')}</a></li>
-            <li><a href="/modulos/logic-maths" data-i18n-key="module_group.logic_maths">{t('module_group.logic_maths')}</a></li>
-            <!-- Other module categories will go here -->
+            {
+              moduleCategories.map((category) => (
+                <li>
+                  <a href={`/modulos/${category.slug}`}>
+                    {t(category.nameKey)}
+                  </a>
+                </li>
+              ))
+            }
           </ul>
         </nav>
       </aside>
@@ -57,6 +60,9 @@ const t = useTranslations(lang);
     padding: 2rem;
     color: var(--color-text);
     display: flex; /* Enable flexbox for sidebar layout */
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100vh;
     flex-wrap: wrap; /* Allow content to wrap on smaller screens */
     gap: 2rem; /* Space between sidebar and content */
   }

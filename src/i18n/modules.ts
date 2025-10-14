@@ -10,12 +10,14 @@ export interface ModuleInfo {
 
 export interface ModuleCategory {
   nameKey: ModuleKey;
+  slug: string;
   modules: ModuleInfo[];
 }
 
 export const moduleCategories: ModuleCategory[] = [
   {
     nameKey: "module_group.initial_base_modules",
+    slug: "initial-base-modules",
     modules: [
       {
         id: "keyboard",
@@ -31,6 +33,7 @@ export const moduleCategories: ModuleCategory[] = [
   },
   {
     nameKey: "module_group.audio_and_control_modulators",
+    slug: "audio-and-control-modulators",
     modules: [
       { id: "vco", nameKey: "vco.subtitle", descriptionKey: "vco.description" },
       { id: "vca", nameKey: "vca.subtitle", descriptionKey: "vca.description" },
@@ -49,6 +52,7 @@ export const moduleCategories: ModuleCategory[] = [
   },
   {
     nameKey: "module_group.audio_shapers_and_effects",
+    slug: "audio-shapers-and-effects",
     modules: [
       { id: "vcf", nameKey: "vcf.subtitle", descriptionKey: "vcf.description" },
       {
@@ -85,6 +89,7 @@ export const moduleCategories: ModuleCategory[] = [
   },
   {
     nameKey: "module_group.analysis_and_utilities",
+    slug: "analysis-and-utilities",
     modules: [
       {
         id: "spectrumanalyzer",
@@ -92,5 +97,30 @@ export const moduleCategories: ModuleCategory[] = [
         descriptionKey: "spectrumanalyzer.description",
       },
     ],
+  },
+  {
+    nameKey: "module_group.sequencing_and_logic",
+    slug: "sequencing-and-logic",
+    modules: [],
+  },
+  {
+    nameKey: "module_group.effects_modules",
+    slug: "effects-modules-and-processors",
+    modules: [],
+  },
+  {
+    nameKey: "module_group.sequencing_modules",
+    slug: "sequencing-and-control-modules",
+    modules: [],
+  },
+  {
+    nameKey: "module_group.audio_oscillators",
+    slug: "audio-and-oscillator-modules",
+    modules: [],
+  },
+  {
+    nameKey: "module_group.logic_maths",
+    slug: "logic-and-maths-modules",
+    modules: [],
   },
 ];

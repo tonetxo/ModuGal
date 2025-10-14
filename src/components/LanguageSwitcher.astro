@@ -1,13 +1,15 @@
 ---
-import { languages } from '../i18n/ui';
+import { languages } from "../i18n/ui";
 ---
 
 <div class="lang-switcher">
-  {Object.entries(languages).map(([lang, label]) => (
-    <button class:list={[`lang-button`]} data-lang={lang}>
-      {label}
-    </button>
-  ))}
+  {
+    Object.entries(languages).map(([lang, label]) => (
+      <button class:list={[`lang-button`]} data-lang={lang}>
+        {label}
+      </button>
+    ))
+  }
 </div>
 
 <style>
@@ -44,14 +46,14 @@ import { languages } from '../i18n/ui';
 </style>
 
 <script>
-  import { ui, defaultLang } from '../i18n/ui';
+  import { ui, defaultLang } from "../i18n/ui";
 
   type Lang = keyof typeof ui;
-  type Key = keyof typeof ui[Lang];
+  type Key = keyof (typeof ui)[Lang];
 
   function getLang(): Lang {
-    if (typeof localStorage !== 'undefined') {
-      const storedLang = localStorage.getItem('lang');
+    if (typeof localStorage !== "undefined") {
+      const storedLang = localStorage.getItem("lang");
       if (storedLang && storedLang in ui) {
         return storedLang as Lang;
       }
@@ -60,26 +62,32 @@ import { languages } from '../i18n/ui';
   }
 
   function setLang(lang: Lang) {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('lang', lang);
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem("lang", lang);
     }
-    
-    document.querySelectorAll('[data-i18n-key]').forEach(el => {
-      const key = el.getAttribute('data-i18n-key') as Key;
-      if (key && ui[lang] && ui[lang][key]) {
-        (el as HTMLElement).innerHTML = ui[lang][key];
+
+    const langTexts = ui[lang] || ui[defaultLang];
+
+    document.querySelectorAll("[data-i18n-key]").forEach((el) => {
+      const key = el.getAttribute("data-i18n-key") as Key;
+      if (key && langTexts[key]) {
+        (el as HTMLElement).innerHTML = langTexts[key];
+      }
+      if (el instanceof HTMLElement) {
+        el.style.visibility = "visible";
       }
     });
 
-    document.querySelectorAll('.lang-button').forEach(button => {
-      button.classList.toggle('active', button.getAttribute('data-lang') === lang);
+    document.querySelectorAll(".lang-button").forEach((button) => {
+      button.classList.toggle(
+        "active",
+        button.getAttribute("data-lang") === lang
+      );
     });
 
-    const event = new CustomEvent('language-change', { detail: { lang } });
+    const event = new CustomEvent("language-change", { detail: { lang } });
     document.dispatchEvent(event);
   }
-
-  // --- INICIO DEL CAMBIO ---
 
   // Función para aplicar las traducciones
   function applyCurrentLanguage() {
@@ -88,17 +96,17 @@ import { languages } from '../i18n/ui';
   }
 
   // Ejecutar al cargar la página por primera vez y después de cada navegación
-  document.addEventListener('astro:page-load', applyCurrentLanguage);
-
-
-  // El listener para los botones se queda como está
-  document.addEventListener('click', (e) => {
-      const target = e.target as HTMLElement;
-      if (target.matches('.lang-button')) {
-        const lang = target.getAttribute('data-lang') as Lang;
-        setLang(lang);
-      }
+  document.addEventListener("astro:page-load", () => {
+    // Usamos requestAnimationFrame para asegurar que el DOM está completamente listo
+    requestAnimationFrame(applyCurrentLanguage);
   });
 
-  // --- FIN DEL CAMBIO ---
+  // El listener para los botones se queda como está
+  document.addEventListener("click", (e) => {
+    const target = e.target as HTMLElement;
+    if (target.matches(".lang-button")) {
+      const lang = target.getAttribute("data-lang") as Lang;
+      setLang(lang);
+    }
+  });
 </script>
