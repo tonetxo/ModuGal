@@ -1,20 +1,65 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import DescripcionGeneral from '../DescripcionGeneral.astro';
+import { getLangFromUrl, useTranslations } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
-<Layout title="Soporte - ModuGal">
-  <div class="page-content">
-    <h1 data-i18n-key="nav.support">Soporte</h1>
-    <p>Página en construcción.</p>
-    <a href="/">Volver al inicio</a>
-  </div>
+<Layout title={t('nav.support')}>
+  <main class="page-content">
+    <h1 data-i18n-key="nav.support">{t('nav.support')}</h1>
+    
+    <DescripcionGeneral />
+
+  </main>
 </Layout>
 
 <style>
   .page-content {
-    text-align: center;
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
   }
-  a {
+
+  h1 {
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 2.5rem;
+  }
+
+  /* 
+    Override component styles to match the dark theme.
+    Using :global() to pierce style scoping. 
+  */
+  .page-content :global(.synth-description) {
+    color: var(--color-text);
+    max-width: 100%;
+    font-family: var(--font-family-body);
+    line-height: 1.7;
+  }
+
+  .page-content :global(.synth-description h2),
+  .page-content :global(.synth-description h3) {
+    color: var(--color-primary);
+    border-bottom: 1px solid #444;
+    font-family: var(--font-family-headings);
+  }
+
+  .page-content :global(.synth-description strong) {
     color: var(--color-accent-1);
+  }
+  
+  .page-content :global(.synth-description em) {
+    color: #ccc;
+  }
+
+  .page-content :global(.synth-description ul) {
+    padding-left: 25px;
+  }
+
+  .page-content :global(.synth-description li) {
+    margin-bottom: 1rem;
   }
 </style>
