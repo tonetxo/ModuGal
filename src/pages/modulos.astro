@@ -1,9 +1,88 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { getLangFromUrl, useTranslations } from '../i18n/utils';
+import { promises as fs } from 'fs';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
+
+// Helper function to generate a slug from a string
+const slugify = (text) => {
+  if (!text) return '';
+  return text
+    .toString()
+    .toLowerCase()
+    .replace(/\s+/g, '-')           // Replace spaces with -
+    .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+    .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+    .replace(/^-+/, '')             // Trim - from start of text
+    .replace(/-+$/, '');            // Trim - from end of text
+};
+
+// Read and parse the modulos.md file
+const mdContent = await fs.readFile('modulos.md', 'utf-8');
+
+const categories = [];
+let currentCategory = null;
+let currentModule = null;
+let currentListKey = null; // 'inputs', 'outputs', 'controls', or 'description'
+
+mdContent.split('\n').forEach(line => {
+    const trimmedLine = line.trim();
+
+    if (trimmedLine.startsWith('## ')) {
+        const title = trimmedLine.substring(3).trim();
+        currentCategory = { title, slug: slugify(title), modules: [] };
+        categories.push(currentCategory);
+        currentModule = null;
+        currentListKey = null;
+        return;
+    }
+
+    if (trimmedLine.startsWith('### ') && currentCategory) {
+        const title = trimmedLine.substring(4).trim();
+        currentModule = {
+            title,
+            slug: slugify(title),
+            description: '',
+            inputs: [],
+            outputs: [],
+            controls: []
+        };
+        currentCategory.modules.push(currentModule);
+        currentListKey = null;
+        return;
+    }
+
+    if (!currentModule) return;
+
+    if (trimmedLine.startsWith('**Descripción:**') || trimmedLine.startsWith('- **Descripción:**')) {
+        currentModule.description = trimmedLine.replace(/^-?\s*\*\*Descripción:\*\*\s*/, '');
+        currentListKey = 'description';
+        return;
+    }
+    if (trimmedLine.startsWith('**Controles:**') || trimmedLine.startsWith('- **Controles:**')) {
+        currentListKey = 'controls';
+        return;
+    }
+    if (trimmedLine.startsWith('**Entradas:**') || trimmedLine.startsWith('- **Entradas:**')) {
+        currentListKey = 'inputs';
+        return;
+    }
+    if (trimmedLine.startsWith('**Salidas:**') || trimmedLine.startsWith('- **Salidas:**')) {
+        currentListKey = 'outputs';
+        return;
+    }
+
+    if (trimmedLine.startsWith('- ')) {
+        const item = trimmedLine.substring(2).trim();
+        if (currentListKey && Array.isArray(currentModule[currentListKey])) {
+            currentModule[currentListKey].push(item);
+        }
+    } else if (trimmedLine && currentListKey === 'description') {
+        currentModule.description += ' ' + trimmedLine;
+    }
+});
 ---
 
 <Layout title={t('nav.modules')}>
@@ -15,92 +94,90 @@ const t = useTranslations(lang);
         <h2 class="sidebar-title" data-i18n-key="modules_menu.title">{t('modules_menu.title')}</h2>
         <nav>
           <ul>
-            <li><a href="/modulos/initial-base" data-i18n-key="module_group.initial_base_modules">{t('module_group.initial_base_modules')}</a></li>
-            <li><a href="/modulos/audio-control" data-i18n-key="module_group.audio_and_control_modulators">{t('module_group.audio_and_control_modulators')}</a></li>
-            <!-- Other module categories will go here -->
+            {categories.map(category => (
+              <li><a href={`#${category.slug}`}>{category.title}</a></li>
+            ))}
           </ul>
         </nav>
       </aside>
       <section class="modules-content">
-        <h2 data-i18n-key="mechanics.title">{t('mechanics.title')}</h2>
-        <p data-i18n-key="mechanics.intro">{t('mechanics.intro')}</p>
+        {categories.map(category => (
+          <div id={category.slug} class="category-section">
+            <h2>{category.title}</h2>
+            {category.modules.map(module => (
+              <article class="module-card" id={module.slug}>
+                <h3>{module.title}</h3>
+                <p>{module.description}</p>
+                
+                {module.controls.length > 0 && (
+                  <>
+                    <h4>Controles</h4>
+                    <ul>
+                      {module.controls.map(control => <li>{control}</li>)}
+                    </ul>
+                  </>
+                )}
+                
+                {module.inputs.length > 0 && (
+                  <>
+                    <h4>Entradas</h4>
+                    <ul>
+                      {module.inputs.map(input => <li>{input}</li>)}
+                    </ul>
+                  </>
+                )}
 
-        <h3 data-i18n-key="mechanics.wiring_title">{t('mechanics.wiring_title')}</h3>
-        <p data-i18n-key="mechanics.wiring_description">{t('mechanics.wiring_description')}</p>
-
-        <h3 data-i18n-key="mechanics.context_menu_title">{t('mechanics.context_menu_title')}</h3>
-        <p data-i18n-key="mechanics.context_menu_description">{t('mechanics.context_menu_description')}</p>
-
-        <h3 data-i18n-key="mechanics.module_interaction_title">{t('mechanics.module_interaction_title')}</h3>
-        <p data-i18n-key="mechanics.module_interaction_description">{t('mechanics.module_interaction_description')}</p>
-
-        <h3 data-i18n-key="mechanics.app_menu_title">{t('mechanics.app_menu_title')}</h3>
-        <p data-i18n-key="mechanics.app_menu_description">{t('mechanics.app_menu_description')}</p>
-        <ul>
-          <li><span data-i18n-key="mechanics.app_menu.file_save_load" set:html={t('mechanics.app_menu.file_save_load')}></span></li>
-          <li><span data-i18n-key="mechanics.app_menu.edit_undo_redo" set:html={t('mechanics.app_menu.edit_undo_redo')}></span></li>
-          <li><span data-i18n-key="mechanics.app_menu.view_visualizer" set:html={t('mechanics.app_menu.view_visualizer')}></span></li>
-          <li><span data-i18n-key="mechanics.app_menu.themes" set:html={t('mechanics.app_menu.themes')}></span></li>
-          <li><span data-i18n-key="mechanics.app_menu.midi" set:html={t('mechanics.app_menu.midi')}></span></li>
-          <li><span data-i18n-key="mechanics.app_menu.license" set:html={t('mechanics.app_menu.license')}></span></li>
-        </ul>
-
-        <h3 data-i18n-key="mechanics.module_specific_actions_title">{t('mechanics.module_specific_actions_title')}</h3>
-        <p data-i18n-key="mechanics.module_specific_actions_description">{t('mechanics.module_specific_actions_description')}</p>
-        <!-- Detailed mechanics descriptions will go here -->
+                {module.outputs.length > 0 && (
+                  <>
+                    <h4>Salidas</h4>
+                    <ul>
+                      {module.outputs.map(output => <li>{output}</li>)}
+                    </ul>
+                  </>
+                )}
+              </article>
+            ))}
+          </div>
+        ))}
       </section>
     </div>
-
   </main>
-
-<script>
-  document.addEventListener('astro:page-load', () => {
-    const currentPath = window.location.pathname;
-    const navLinks = document.querySelectorAll('.modules-sidebar nav a');
-    
-    navLinks.forEach(link => {
-      const linkPath = link.getAttribute('href');
-      if (linkPath === currentPath) {
-        link.classList.add('active');
-      }
-    });
-  });
-</script>
-
 </Layout>
 
 <style>
+  :root {
+    --sidebar-width: 280px;
+  }
+
   .page-content {
-    max-width: 1200px; /* Increased max-width for sidebar layout */
+    max-width: 1400px;
     margin: 2rem auto;
     padding: 2rem;
     color: var(--color-text);
-    display: flex; /* Enable flexbox for sidebar layout */
-    flex-wrap: wrap; /* Allow content to wrap on smaller screens */
-    gap: 2rem; /* Space between sidebar and content */
   }
 
   h1 {
     text-align: center;
     margin-bottom: 3rem;
     font-size: 2.5rem;
-    width: 100%; /* Ensure h1 spans full width */
+    width: 100%;
   }
 
   .modules-container {
     display: flex;
-    width: 100%;
     gap: 2rem;
-    flex-wrap: wrap; /* Allow sidebar and content to wrap */
+    align-items: flex-start;
   }
 
   .modules-sidebar {
-    flex: 0 0 250px; /* Fixed width for sidebar */
+    flex: 0 0 var(--sidebar-width);
     background-color: #2a2a2a;
     border: 1px solid #444;
     border-radius: 8px;
     padding: 1.5rem;
-    height: fit-content; /* Adjust height to content */
+    height: auto;
+    position: sticky;
+    top: 2rem;
   }
 
   .sidebar-title {
@@ -129,7 +206,7 @@ const t = useTranslations(lang);
     display: block;
     padding: 0.5rem 0.75rem;
     border-radius: 4px;
-    transition: background-color 0.2s ease-in-out;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
   }
 
   .modules-sidebar nav a:hover {
@@ -137,40 +214,86 @@ const t = useTranslations(lang);
     color: #1a1a1a;
   }
 
-  .modules-sidebar nav a.active {
-    color: #ffffff;
-    font-weight: bold;
-    background-color: var(--color-accent-1);
+  .modules-content {
+    flex: 1;
+    min-width: 0;
   }
 
-  .modules-content {
-    flex: 1; /* Take remaining space */
+  .category-section {
+    margin-bottom: 4rem;
+    scroll-margin-top: 2rem; /* Offset for sticky header */
+  }
+
+  .category-section:last-child {
+    margin-bottom: 0;
+  }
+
+  .category-section h2 {
+    font-family: var(--font-family-headings);
+    color: var(--color-accent-1);
+    font-size: 2.2rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #444;
+    padding-bottom: 0.75rem;
+  }
+
+  .module-card {
     background-color: #333;
     border: 1px solid #444;
     border-radius: 8px;
     padding: 2rem;
+    margin-bottom: 2rem;
   }
 
-  .modules-content h2 {
-    font-family: var(--font-family-headings);
-    color: var(--color-accent-1);
-    font-size: 2rem;
-    margin: 0 0 1rem 0;
+  .module-card:last-child {
+    margin-bottom: 0;
   }
 
-  .modules-content p {
-    line-height: 1.6;
+  .module-card h3 {
+    font-size: 1.8rem;
+    color: var(--color-primary);
+    margin-top: 0;
     margin-bottom: 1rem;
   }
 
-  /* Media query for smaller screens */
-  @media (max-width: 768px) {
-    .page-content, .modules-container {
+  .module-card p {
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+
+  .module-card h4 {
+    font-size: 1.3rem;
+    color: var(--color-accent-1);
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #555;
+    padding-bottom: 0.5rem;
+  }
+
+  .module-card ul {
+    list-style: none;
+    padding-left: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .module-card ul li {
+    background-color: #2c2c2c;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    border-left: 3px solid var(--color-accent-1);
+    font-family: monospace;
+  }
+
+  @media (max-width: 900px) {
+    .modules-container {
       flex-direction: column;
     }
     .modules-sidebar {
-      flex: none; /* Remove fixed width on small screens */
+      position: static;
       width: 100%;
+      margin-bottom: 2rem;
     }
   }
 </style>
