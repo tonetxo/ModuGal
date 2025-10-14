@@ -405,7 +405,14 @@ const images = [
       sinePath2.setAttribute("d", pathData2);
     }
 
-    // --- Audio Context Initialization ---
+    function decayPeak() {
+      if (peakAmplitude > 0) {
+        peakAmplitude = Math.max(0, peakAmplitude - 2.5);
+        updateSineWaves();
+        requestAnimationFrame(decayPeak);
+      }
+    }
+
     function initAudioContext() {
       if (window.audioContext) return;
       try {
@@ -416,24 +423,26 @@ const images = [
       }
     }
 
-    // --- Animation & Audio Logic ---
     function setupBlip() {
       if (!window.audioContext || blipOsc) return;
       blipOsc = window.audioContext.createOscillator();
       blipGain = window.audioContext.createGain();
-      blipGain.gain.value = 0; // Inicia el volumen a 0 para evitar el pitido inicial
+      blipGain.gain.value = 0;
       blipOsc.connect(blipGain).connect(window.audioContext.destination);
       blipOsc.start();
     }
 
-    // ...existing code...
-
-    function decayPeak() {
-      if (peakAmplitude > 0) {
-        peakAmplitude = Math.max(0, peakAmplitude - 2.5);
-        updateSineWaves();
-        requestAnimationFrame(decayPeak);
-      }
+    function playMenuBlip(freq = 440) {
+      if (!window.audioContext || !blipOsc || !blipGain) return;
+      const audioContext = window.audioContext;
+      blipOsc.frequency.cancelScheduledValues(audioContext.currentTime);
+      blipOsc.frequency.setValueAtTime(freq, audioContext.currentTime);
+      blipGain.gain.cancelScheduledValues(audioContext.currentTime);
+      blipGain.gain.setValueAtTime(0.2, audioContext.currentTime);
+      blipGain.gain.exponentialRampToValueAtTime(
+        0.001,
+        audioContext.currentTime + 0.2
+      );
     }
 
     function playMenuBlip(freq = 440) {
@@ -506,8 +515,8 @@ const images = [
         isDraggingKnob = true;
         startY = e.clientY;
         lastAngle = currentAngle;
-        initAudioContext(); // Initialize audio on first interaction
-        if (!blipOsc) setupBlip(); // Setup oscillator if not already done
+        if (window.audioController) window.audioController.startEngine();
+        if (!blipOsc) setupBlip();
         if (knobRing) knobRing.style.transition = "none";
       });
       window.addEventListener("mousemove", (e: MouseEvent) => {
