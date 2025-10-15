@@ -1,4 +1,3 @@
-
 # Guía de Módulos del Sintetizador
 
 Este documento detalla la funcionalidad, los parámetros y las conexiones de cada módulo disponible en el sintetizador.
@@ -245,5 +244,5 @@ Este documento detalla la funcionalidad, los parámetros y las conexiones de cad
 - **Entradas:** `In L`, `In R`.
 
 ### Oscilloscope / SpectrumAnalyzer
-- **Descripción:** Herramientas de visualización. El osciloscopio muestra la forma de onda de una señal en el tiempo, mientras que el analizador de espectro muestra su contenido de frecuencia. Son indispensables para entender lo que está ocuriendo con el sonido.
+- **Descripción:** Herramientas de visualización. El osciloscopio muestra la forma de onda de una señal en el tiempo, mientras que el analizador de espectro muestra su contenido de frecuencia. Son indispensables para entender lo que está ocurriendo con el sonido.
 - **Entradas:** `In`.

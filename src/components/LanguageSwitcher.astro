@@ -1,13 +1,37 @@
 ---
-import { languages } from '../i18n/ui';
+import { languages, defaultLang } from "../i18n/ui";
+
+const { pathname } = Astro.url;
+
+// Remove language prefix from the path
+const pathParts = pathname.split("/").filter((p) => p);
+const langKeys = Object.keys(languages);
+if (pathParts.length > 0 && langKeys.includes(pathParts[0])) {
+  pathParts.shift();
+}
+const pathWithoutLang = pathParts.join("/");
+
+const currentLang = pathname.split("/")[1] || defaultLang;
 ---
 
 <div class="lang-switcher">
-  {Object.entries(languages).map(([lang, label]) => (
-    <button class:list={[`lang-button`]} data-lang={lang}>
-      {label}
-    </button>
-  ))}
+  {Object.entries(languages).map(([lang, label]) => {
+    const newPath = lang === defaultLang
+        ? `/${pathWithoutLang}`
+        : `/${lang}/${pathWithoutLang}`;
+    return (
+      <a
+        href={newPath}
+        class:list={[
+          "lang-button",
+          { active: lang === currentLang },
+        ]}
+        data-lang={lang}
+      >
+        {label}
+      </a>
+    );
+  })}
 </div>
 
 <style>
@@ -44,61 +68,46 @@ import { languages } from '../i18n/ui';
 </style>
 
 <script>
-  import { ui, defaultLang } from '../i18n/ui';
+  import { defaultLang, languages } from '../i18n/ui';
 
-  type Lang = keyof typeof ui;
-  type Key = keyof typeof ui[Lang];
-
-  function getLang(): Lang {
-    if (typeof localStorage !== 'undefined') {
-      const storedLang = localStorage.getItem('lang');
-      if (storedLang && storedLang in ui) {
-        return storedLang as Lang;
-      }
-    }
-    return defaultLang;
-  }
-
-  function setLang(lang: Lang) {
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem('lang', lang);
-    }
-    
-    document.querySelectorAll('[data-i18n-key]').forEach(el => {
-      const key = el.getAttribute('data-i18n-key') as Key;
-      if (key && ui[lang] && ui[lang][key]) {
-        (el as HTMLElement).innerHTML = ui[lang][key];
-      }
-    });
-
-    document.querySelectorAll('.lang-button').forEach(button => {
-      button.classList.toggle('active', button.getAttribute('data-lang') === lang);
-    });
-
-    const event = new CustomEvent('language-change', { detail: { lang } });
-    document.dispatchEvent(event);
-  }
-
-  // --- INICIO DEL CAMBIO ---
-
-  // Función para aplicar las traducciones
-  function applyCurrentLanguage() {
-    const currentLang = getLang();
-    setLang(currentLang);
-  }
-
-  // Ejecutar al cargar la página por primera vez y después de cada navegación
-  document.addEventListener('astro:page-load', applyCurrentLanguage);
-
-
-  // El listener para los botones se queda como está
   document.addEventListener('click', (e) => {
-      const target = e.target as HTMLElement;
-      if (target.matches('.lang-button')) {
-        const lang = target.getAttribute('data-lang') as Lang;
-        setLang(lang);
+    const target = e.target as HTMLElement;
+    if (target.matches('.lang-button')) {
+      const newLang = target.getAttribute('data-lang');
+      const pathParts = window.location.pathname.split('/').filter(p => p);
+
+      // Remove any existing language prefix
+      const langKeys = Object.keys(languages);
+      if (pathParts.length > 0 && langKeys.includes(pathParts[0])) {
+          pathParts.shift();
       }
+
+      let newPath = pathParts.join('/');
+
+      if (newLang !== defaultLang) {
+        newPath = `/${newLang}/${newPath}`;
+      } else {
+        // For default lang, we want to be at the root of the language dir
+        newPath = `/${defaultLang}/${newPath}`;
+      }
+
+      // Handle root path
+      if (newPath === `/${defaultLang}/` || newPath === '//') newPath = `/${defaultLang}`;
+      if (newPath.endsWith('/') && newPath.length > 1) newPath = newPath.slice(0, -1);
+
+      window.location.pathname = newPath;
+    }
   });
 
-  // --- FIN DEL CAMBIO ---
+  // Set active button on page load
+  const pathLang = window.location.pathname.split('/')[1];
+  const langButtons = document.querySelectorAll('.lang-button');
+  const currentLang = (Object.keys(languages).includes(pathLang)) ? pathLang : defaultLang;
+
+  langButtons.forEach(button => {
+      const buttonLang = button.getAttribute('data-lang');
+      if (buttonLang === currentLang) {
+          button.classList.add('active');
+      }
+  });
 </script>

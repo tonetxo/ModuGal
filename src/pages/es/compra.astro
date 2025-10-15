@@ -1,0 +1,27 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getLangFromUrl, useTranslations } from '../../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+---
+
+<Layout title={t('nav.purchase')}>
+  <div class="page-content">
+    <h1 data-i18n-key="nav.purchase">{t('nav.purchase')}</h1>
+    <p data-i18n-key="under_construction">{t('under_construction')}</p>
+    <a href="/" data-i18n-key="back_to_home">{t('back_to_home')}</a>
+  </div>
+</Layout>
+
+<style>
+  .page-content {
+    text-align: center;
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+  }
+  a {
+    color: var(--color-accent-1);
+  }
+</style>

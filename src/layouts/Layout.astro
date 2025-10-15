@@ -26,7 +26,7 @@ const currentYear = new Date().getFullYear();
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="uninitialized">
     
     <div class="sound-controls" transition:persist="audio-controls">
       <a href="/" id="home-button" class="nav-button" title="Inicio">
@@ -216,5 +216,19 @@ h1, h2, h3, h4 { font-family: var(--font-family-headings); color: var(--color-ac
   }
   footer a:hover {
     text-decoration: underline;
+  }
+
+  /* Prevent FOUC on home page */
+  body.uninitialized .main-grid main > .container > header,
+  body.uninitialized .main-grid main > .container > .content,
+  body.uninitialized .slideshow-container {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  .main-grid main > .container > header,
+  .main-grid main > .container > .content,
+  .slideshow-container {
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
   }
 </style>

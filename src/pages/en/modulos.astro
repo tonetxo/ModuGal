@@ -1,0 +1,8 @@
+---
+import ModulesLayout from '../../layouts/ModulesLayout.astro';
+import { getLangFromUrl } from '../../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+---
+
+<ModulesLayout lang={lang} entryId="modulos-en" />

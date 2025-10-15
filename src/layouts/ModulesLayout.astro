@@ -1,0 +1,188 @@
+---
+import Layout from './Layout.astro';
+import { useTranslations } from '../i18n/utils';
+
+const { lang, entryId } = Astro.props;
+
+const t = useTranslations(lang);
+
+// Using import.meta.glob as a workaround to getEntry
+const allModules = await import.meta.glob('../content/modules/*.md');
+const modulePath = `../content/modules/${entryId}.md`;
+
+if (!allModules[modulePath]) {
+  throw new Error(`Module with path ${modulePath} not found.`);
+}
+
+const module = await allModules[modulePath]();
+
+const { Content } = module;
+const headings = module.getHeadings();
+
+const categories = headings.filter(h => h.depth === 2);
+---
+<Layout title={t('nav.modules')}>
+  <main class="page-content">
+    <h1 data-i18n-key="nav.modules">{t('nav.modules')}</h1>
+    
+    <div class="modules-container">
+      <aside class="modules-sidebar">
+        <h2 class="sidebar-title" data-i18n-key="modules_menu.title">{t('modules_menu.title')}</h2>
+        <nav>
+          <ul>
+            {categories.map(category => (
+              <li><a href={`#${category.slug}`}>{category.text}</a></li>
+            ))}
+          </ul>
+        </nav>
+      </aside>
+      <section class="modules-content astro-styles">
+        <Content />
+      </section>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  :root {
+    --sidebar-width: 280px;
+  }
+
+  .page-content {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 2rem;
+    color: var(--color-text);
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 2.5rem;
+    width: 100%;
+  }
+
+  .modules-container {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+  }
+
+  .modules-sidebar {
+    flex: 0 0 var(--sidebar-width);
+    background-color: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 1.5rem;
+    height: auto;
+    position: sticky;
+    top: 2rem;
+  }
+
+  .sidebar-title {
+    font-family: var(--font-family-headings);
+    color: var(--color-primary);
+    font-size: 1.8rem;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--color-accent-1);
+    padding-bottom: 0.5rem;
+  }
+
+  .modules-sidebar nav ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .modules-sidebar nav li {
+    margin-bottom: 0.75rem;
+  }
+
+  .modules-sidebar nav a {
+    color: var(--color-text);
+    text-decoration: none;
+    font-size: 1.1rem;
+    display: block;
+    padding: 0.5rem 0.75rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  }
+
+  .modules-sidebar nav a:hover {
+    background-color: var(--color-accent-1);
+    color: #1a1a1a;
+  }
+
+  .modules-content {
+    flex: 1;
+    min-width: 0;
+    background-color: #333;
+    border: 1px solid #444;
+    border-radius: 8px;
+    padding: 2rem;
+  }
+
+  .modules-content h2 {
+    font-family: var(--font-family-headings);
+    color: var(--color-accent-1);
+    font-size: 2.2rem;
+    margin-top: 1rem; 
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #444;
+    padding-bottom: 0.75rem;
+    scroll-margin-top: 2rem;
+  }
+
+  .modules-content h2:first-of-type {
+      margin-top: 0;
+  }
+
+  .modules-content h3 {
+    font-size: 1.8rem;
+    color: var(--color-primary);
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .modules-content p {
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+
+  .modules-content h4 {
+    font-size: 1.3rem;
+    color: var(--color-accent-1);
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #555;
+    padding-bottom: 0.5rem;
+  }
+
+  .modules-content ul {
+    list-style: none;
+    padding-left: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .modules-content ul li {
+    background-color: #2c2c2c;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    border-left: 3px solid var(--color-accent-1);
+    font-family: monospace;
+  }
+
+  @media (max-width: 900px) {
+    .modules-container {
+      flex-direction: column;
+    }
+    .modules-sidebar {
+      position: static;
+      width: 100%;
+      margin-bottom: 2rem;
+    }
+  }
+</style>
