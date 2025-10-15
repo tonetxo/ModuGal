@@ -237,6 +237,7 @@ const images = [
   }
   .menu-title-area h3.visible {
     opacity: 1;
+    cursor: pointer;
   }
   .slideshow-container {
     display: grid;
@@ -543,6 +544,15 @@ const images = [
         // Simple navigation is enough now that we handle page loads correctly.
         window.location.href = targetPath;
       });
+
+      const menuTitleArea = document.querySelector(".menu-title-area");
+      if (menuTitleArea) {
+        menuTitleArea.addEventListener("click", () => {
+          const targetPath = menuItems[selectedIndex].path;
+          window.location.href = targetPath;
+        });
+      }
+
       updateMenu();
       updateSineWaves();
     }

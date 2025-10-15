@@ -1,32 +1,40 @@
+
 ---
 import { languages, defaultLang } from "../i18n/ui";
 
 const { pathname } = Astro.url;
 
-// Remove language prefix from the path
-const pathParts = pathname.split("/").filter((p) => p);
+// Obtener el slug de la página actual sin el prefijo de idioma
+const pathParts = pathname.split("/").filter(p => p);
 const langKeys = Object.keys(languages);
-if (pathParts.length > 0 && langKeys.includes(pathParts[0])) {
-  pathParts.shift();
-}
-const pathWithoutLang = pathParts.join("/");
+let currentLang = defaultLang;
 
-const currentLang = pathname.split("/")[1] || defaultLang;
+if (pathParts.length > 0 && langKeys.includes(pathParts[0])) {
+  currentLang = pathParts.shift();
+}
+const slug = pathParts.join("/") || 'index'; // 'index' para la página de inicio
+
 ---
 
 <div class="lang-switcher">
   {Object.entries(languages).map(([lang, label]) => {
-    const newPath = lang === defaultLang
-        ? `/${pathWithoutLang}`
-        : `/${lang}/${pathWithoutLang}`;
+    // Construir la nueva ruta correctamente
+    // Para la página de inicio, el slug es 'index', que no debe aparecer en la URL.
+    const finalSlug = slug === 'index' ? '' : slug;
+    const newPath = lang === defaultLang ? `/${lang}/${finalSlug}` : `/${lang}/${finalSlug}`;
+    
+    // Eliminar la barra final si existe, excepto para la raíz del idioma
+    const finalPath = newPath.length > `/${lang}/`.length && newPath.endsWith('/') 
+      ? newPath.slice(0, -1) 
+      : newPath;
+
     return (
       <a
-        href={newPath}
+        href={finalPath}
         class:list={[
           "lang-button",
           { active: lang === currentLang },
         ]}
-        data-lang={lang}
       >
         {label}
       </a>
@@ -66,48 +74,3 @@ const currentLang = pathname.split("/")[1] || defaultLang;
     color: var(--color-base);
   }
 </style>
-
-<script>
-  import { defaultLang, languages } from '../i18n/ui';
-
-  document.addEventListener('click', (e) => {
-    const target = e.target as HTMLElement;
-    if (target.matches('.lang-button')) {
-      const newLang = target.getAttribute('data-lang');
-      const pathParts = window.location.pathname.split('/').filter(p => p);
-
-      // Remove any existing language prefix
-      const langKeys = Object.keys(languages);
-      if (pathParts.length > 0 && langKeys.includes(pathParts[0])) {
-          pathParts.shift();
-      }
-
-      let newPath = pathParts.join('/');
-
-      if (newLang !== defaultLang) {
-        newPath = `/${newLang}/${newPath}`;
-      } else {
-        // For default lang, we want to be at the root of the language dir
-        newPath = `/${defaultLang}/${newPath}`;
-      }
-
-      // Handle root path
-      if (newPath === `/${defaultLang}/` || newPath === '//') newPath = `/${defaultLang}`;
-      if (newPath.endsWith('/') && newPath.length > 1) newPath = newPath.slice(0, -1);
-
-      window.location.pathname = newPath;
-    }
-  });
-
-  // Set active button on page load
-  const pathLang = window.location.pathname.split('/')[1];
-  const langButtons = document.querySelectorAll('.lang-button');
-  const currentLang = (Object.keys(languages).includes(pathLang)) ? pathLang : defaultLang;
-
-  langButtons.forEach(button => {
-      const buttonLang = button.getAttribute('data-lang');
-      if (buttonLang === currentLang) {
-          button.classList.add('active');
-      }
-  });
-</script>

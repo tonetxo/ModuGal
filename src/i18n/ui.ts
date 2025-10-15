@@ -1,7 +1,7 @@
 export const languages = {
-  gl: "Galego",
-  es: "Español",
-  en: "English",
+  gl: "GA",
+  es: "ES",
+  en: "EN",
 };
 
 export const defaultLang = "gl";

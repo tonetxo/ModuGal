@@ -1,0 +1,90 @@
+
+---
+import Layout from './Layout.astro';
+import { useTranslations } from '../i18n/utils';
+import { marked } from 'marked';
+
+const { lang, entryId } = Astro.props;
+
+const t = useTranslations(lang);
+
+const allSupportFiles = await import.meta.glob('../content/support/*.md', { as: 'raw' });
+const supportFilePath = `../content/support/${entryId}.md`;
+
+if (!allSupportFiles[supportFilePath]) {
+  throw new Error(`Support file with path ${supportFilePath} not found.`);
+}
+
+const rawContentWithFrontmatter = await allSupportFiles[supportFilePath]();
+
+// Strip frontmatter
+const rawContent = rawContentWithFrontmatter.replace(/---[\s\S]*?---/, '').trim();
+
+const contentHtml = marked.parse(rawContent);
+
+---
+<Layout title={t('nav.support')}>
+  <main class="page-content">
+    <h1 data-i18n-key="nav.support">{t('nav.support')}</h1>
+    <div class="markdown-content" set:html={contentHtml}></div>
+  </main>
+</Layout>
+
+<style>
+  .page-content {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    color: var(--color-text);
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 2.5rem;
+  }
+
+  .markdown-content :global(h2) {
+    font-family: var(--font-family-headings);
+    color: var(--color-accent-1);
+    font-size: 2rem;
+    margin-top: 4rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #444;
+    padding-bottom: 0.5rem;
+  }
+
+  .markdown-content :global(h3) {
+    font-family: var(--font-family-headings);
+    color: var(--color-accent-2);
+    font-size: 1.5rem;
+    margin-top: 3rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .markdown-content :global(p) {
+    line-height: 1.8;
+    margin-bottom: 1.2rem;
+    font-size: 1.05rem;
+  }
+
+  .markdown-content :global(ul) {
+    list-style: disc;
+    padding-left: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .markdown-content :global(li) {
+    margin-bottom: 0.8rem;
+    line-height: 1.7;
+  }
+
+  .markdown-content :global(strong) {
+    color: var(--color-accent-1);
+    font-weight: 600;
+  }
+
+  .markdown-content :global(a) {
+    color: var(--color-accent-2);
+  }
+</style>
