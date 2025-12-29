@@ -28,6 +28,48 @@ const homePath = `/${lang}/`;
     <title data-i18n-key="page.title">{title}</title>
 
     <ViewTransitions />
+    <script is:inline>
+      (function () {
+        // Session-aware Language Redirect
+        // Goal: Force GL on first visit OR on Reload.
+        // Keep current lang on internal links (even hard reloads like the Knob).
+
+        try {
+          const path = window.location.pathname;
+          const isNonDefaultLang = /^\/(es|en)(\/|$)/.test(path);
+          const sessionActive = sessionStorage.getItem(
+            "modugal_session_active",
+          );
+
+          // Check for Reload
+          let isReload = false;
+          // PerformanceNavigationTiming (Modern)
+          const navEntry = performance.getEntriesByType("navigation")[0];
+          if (navEntry && navEntry.type === "reload") isReload = true;
+          // Performance.navigation (Legacy)
+          else if (
+            window.performance &&
+            performance.navigation &&
+            performance.navigation.type === 1
+          )
+            isReload = true;
+
+          if (isNonDefaultLang) {
+            // Redirect to GL if it's a RELOAD or if it's a FRESH SESSION
+            if (isReload || !sessionActive) {
+              const newPath = path.replace(/^\/(es|en)/, "/gl");
+              window.location.replace(newPath);
+              return;
+            }
+          }
+
+          // Mark session as active for future navigations
+          sessionStorage.setItem("modugal_session_active", "true");
+        } catch (e) {
+          console.warn("Lang redirect logic check failed:", e);
+        }
+      })();
+    </script>
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
