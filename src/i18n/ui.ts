@@ -15,8 +15,8 @@ export const ui = {
     "header.subtitle": "Sintetizador Modular Virtual",
     tagline:
       "O obradoiro do inventor sónico. Esculpe as túas paisaxes sonoras cunha precisión doutra era.",
-    "button.buy": "Comprar Versión Completa",
-    "button.demo": "Descargar Demo",
+    "button.demo_linux": "Demo Linux",
+    "button.demo_windows": "Demo Windows",
     "nav.home": "Inicio",
     "nav.modules": "Módulos",
     "nav.demos": "Demos",
@@ -225,8 +225,8 @@ export const ui = {
     "header.subtitle": "Sintetizador Modular Virtual",
     tagline:
       "El taller del inventor sónico. Esculpe tus paisajes sonoros con una precisión de otra era.",
-    "button.buy": "Comprar Versión Completa",
-    "button.demo": "Descargar Demo",
+    "button.demo_linux": "Demo Linux",
+    "button.demo_windows": "Demo Windows",
     "nav.home": "Inicio",
     "nav.modules": "Módulos",
     "nav.demos": "Demos",
@@ -435,8 +435,8 @@ export const ui = {
     "header.subtitle": "Virtual Modular Synthesizer",
     tagline:
       "The sonic inventor's workshop. Sculpt your soundscapes with the precision of another era.",
-    "button.buy": "Buy Full Version",
-    "button.demo": "Download Demo",
+    "button.demo_linux": "Demo Linux",
+    "button.demo_windows": "Demo Windows",
     "nav.home": "Home",
     "nav.modules": "Modules",
     "nav.demos": "Demos",
