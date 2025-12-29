@@ -1,10 +1,11 @@
 
 ---
+
 title: "Soporte"
 description: "Guía de inicio, preguntas frecuentes, solución de problemas e como contactarnos."
 ---
 
-## Benvingido a ModuGal: O Teu Universo Sonoro Modular
+## Benvido a ModuGal: O Teu Universo Sonoro Modular
 
 ModuGal é un sintetizador modular virtual inspirado nos sistemas hardware clásicos, pero coa flexibilidade e potencia do software moderno. Ofréceche un lenzo en branco para que poidas deseñar, experimentar e esculpir sons dunha maneira intuitiva e visual. Dende simples melodías ata complexas texturas sonoras e sistemas xerativos, o único límite é a túa imaxinación.
 
@@ -16,13 +17,13 @@ Ao abrir a aplicación, atopas os módulos **Teclado** e **Altofalantes** xa pre
 
 A interacción co sintetizador está deseñada para ser rápida e fluída:
 
-*   **Engadir Módulos:** Fai **clic dereito** en calquera espazo baleiro do lenzo para abrir o menú de selección. Navega polas categorías (Osciladores, Filtros, Efectos, etc.) e fai clic no módulo que desexes engadir.
-*   **Conectar Módulos:** Fai **clic esquerdo** nunha saída (output) dun módulo e arrastra o cable virtual ata unha entrada (input) doutro. As entradas e saídas compatibles resaltaranse para guiarte. Para desconectar un cable, podes facer clic no seu punto de conexión de entrada ou directamente sobre o propio cable.
-*   **Navegación no Lenzo:**
-    *   *Zoom:* Utiliza a **roda do rato** para achegar ou afastar a vista, permitíndoche ter unha visión xeral do teu patch ou centrarte en detalles específicos.
-    *   *Pan (Desprazamento):* Mantén presionado o **botón esquerdo do rato** en calquera parte baleira do lenzo e arrastra para desprazarte.
-*   **Interactuar cos Módulos:** Fai **clic esquerdo** e arrastra os potenciómetros, faders ou switches para modificar os parámetros de cada módulo en tempo real. Observa e escoita como os teus cambios afectan ao son.
-*   **Menú do Módulo:** Fai **clic dereito** na cabeceira de calquera módulo para acceder a opcións adicionais, como duplicalo, eliminalo ou ver información específica.
+* **Engadir Módulos:** Fai **clic dereito** en calquera espazo baleiro do lenzo para abrir o menú de selección. Navega polas categorías (Osciladores, Filtros, Efectos, etc.) e fai clic no módulo que desexes engadir.
+* **Conectar Módulos:** Fai **clic esquerdo** nunha saída (output) dun módulo e arrastra o cable virtual ata unha entrada (input) doutro. As entradas e saídas compatibles resaltaranse para guiarte. Para desconectar un cable, podes facer clic no seu punto de conexión de entrada ou directamente sobre o propio cable.
+* **Navegación no Lenzo:**
+  * *Zoom:* Utiliza a **roda do rato** para achegar ou afastar a vista, permitíndoche ter unha visión xeral do teu patch ou centrarte en detalles específicos.
+  * *Pan (Desprazamento):* Mantén presionado o **botón esquerdo do rato** en calquera parte baleira do lenzo e arrastra para desprazarte.
+* **Interactuar cos Módulos:** Fai **clic esquerdo** e arrastra os potenciómetros, faders ou switches para modificar os parámetros de cada módulo en tempo real. Observa e escoita como os teus cambios afectan ao son.
+* **Menú do Módulo:** Fai **clic dereito** na cabeceira de calquera módulo para acceder a opcións adicionais, como duplicalo, eliminalo ou ver información específica.
 
 ### Entendendo o Fluxo de Sinal
 
@@ -54,9 +55,9 @@ R: Si! O módulo Wavetable permíteche cargar os teus propios ficheiros de son e
 
 **Problema: A aplicación non produce son.**
 
-1.  **Revisa a conexión de son:** Asegúrate de que os módulos están correctamente conectados dende unha fonte de son (como un VCO) ata a saída principal.
-2.  **Comproba o ADSR:** Verifica que a envolvente ADSR estea a ser disparada por un secuenciador ou un teclado MIDI e que a súa saída de ganancia estea conectada ao VCA.
-3.  **Verifica o volume:** Asegúrate de que o control de volume principal non estea a cero.
+1. **Revisa a conexión de son:** Asegúrate de que os módulos están correctamente conectados dende unha fonte de son (como un VCO) ata a saída principal.
+2. **Comproba o ADSR:** Verifica que a envolvente ADSR estea a ser disparada por un secuenciador ou un teclado MIDI e que a súa saída de ganancia estea conectada ao VCA.
+3. **Verifica o volume:** Asegúrate de que o control de volume principal non estea a cero.
 
 **Problema: A aplicación péchase inesperadamente.**
 
