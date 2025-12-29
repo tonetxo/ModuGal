@@ -429,6 +429,7 @@ const images = [
 
 <script>
   import { ui, defaultLang } from "../i18n/ui";
+  import { navigate } from "astro:transitions/client";
 
   // Cleanup controller
   let windowEventsController: AbortController | null = null;
@@ -458,23 +459,22 @@ const images = [
 
     // --- State ---
     let peakAmplitude = 0;
-    
+
     // Detect language from URL path
     const pathMatch = window.location.pathname.match(/^\/([a-z]{2})/);
     const currentLang = pathMatch ? pathMatch[1] : defaultLang;
 
     // Knob starts at 0 every time
     let currentAngle = 0;
-    
+
     let blipOsc: OscillatorNode | null = null;
     let blipGain: GainNode | null = null;
 
-
     // Build dynamic paths - Handle root path correctly
-    // If currentLang is 'gl', we might be at '/' or '/gl/'. 
+    // If currentLang is 'gl', we might be at '/' or '/gl/'.
     // We strictly use /gl/, /es/, /en/ prefixes for consistency.
     const pathPrefix = `/${currentLang}`;
-    
+
     const menuItems = [
       { nameKey: "nav.home", path: `${pathPrefix}/`, freq: 261.63 },
       { nameKey: "nav.modules", path: `${pathPrefix}/modulos`, freq: 329.63 },
@@ -608,10 +608,13 @@ const images = [
 
       function navigateToSelected() {
         const targetPath = menuItems[selectedIndex].path;
-        
-        // Prevent navigation loop if we are already there (except for home to refresh)
-        if (window.location.pathname !== targetPath && window.location.pathname + '/' !== targetPath) {
-             window.location.href = targetPath;
+
+        // Prevent navigation loop if we are already there
+        if (
+          window.location.pathname !== targetPath &&
+          window.location.pathname + "/" !== targetPath
+        ) {
+          navigate(targetPath);
         }
       }
 
@@ -647,7 +650,7 @@ const images = [
           if (!isDraggingKnob) return;
           isDraggingKnob = false;
           if (knobRing) knobRing.style.transition = "transform 0.1s linear";
-          
+
           // Navigate on release if we dragged
           navigateToSelected();
         },
@@ -691,7 +694,7 @@ const images = [
           if (!isDraggingKnob) return;
           isDraggingKnob = false;
           if (knobRing) knobRing.style.transition = "transform 0.1s linear";
-          
+
           // Navigate on release
           navigateToSelected();
         },
@@ -703,8 +706,8 @@ const images = [
         // If we just clicked without dragging (or very little), navigate too
         // Note: mouseup/touchend handles dragging release. This handles pure clicks.
         // We use a small timeout to avoid double navigation if mouseup already fired?
-        // Actually, if mouseup fired, it navigated. 
-        // We can check if we already navigated? 
+        // Actually, if mouseup fired, it navigated.
+        // We can check if we already navigated?
         // Simpler: let mouseup handle everything related to the knob interaction.
       });
 
@@ -718,7 +721,6 @@ const images = [
       updateMenu();
       updateSineWaves();
     }
-
 
     // --- Slideshow Logic ---
     const slideshowContainer = document.querySelector(".slideshow-container");
