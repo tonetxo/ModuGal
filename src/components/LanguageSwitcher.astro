@@ -1,45 +1,36 @@
-
 ---
-import { languages, defaultLang } from "../i18n/ui";
+import { languages } from "../i18n/ui";
+import { getLangFromUrl } from "../i18n/utils";
 
-const { pathname } = Astro.url;
+const currentLang = getLangFromUrl(Astro.url);
 
-// Obtener el slug de la página actual sin el prefijo de idioma
-const pathParts = pathname.split("/").filter(p => p);
+// Get the path relative to the current language
+// e.g. /gl/modulos -> modulos
+// e.g. /es -> ""
+const pathParts = Astro.url.pathname.split('/').filter(p => p);
 const langKeys = Object.keys(languages);
-let currentLang = defaultLang;
 
+// Remove the language part if it matches a known language
 if (pathParts.length > 0 && langKeys.includes(pathParts[0])) {
-  currentLang = pathParts.shift();
+    pathParts.shift();
 }
-const slug = pathParts.join("/") || 'index'; // 'index' para la página de inicio
-
+const currentSlug = pathParts.join('/');
 ---
 
 <div class="lang-switcher">
-  {Object.entries(languages).map(([lang, label]) => {
-    // Construir la nueva ruta correctamente
-    // Para la página de inicio, el slug es 'index', que no debe aparecer en la URL.
-    const finalSlug = slug === 'index' ? '' : slug;
-    const newPath = lang === defaultLang ? `/${lang}/${finalSlug}` : `/${lang}/${finalSlug}`;
-    
-    // Eliminar la barra final si existe, excepto para la raíz del idioma
-    const finalPath = newPath.length > `/${lang}/`.length && newPath.endsWith('/') 
-      ? newPath.slice(0, -1) 
-      : newPath;
-
-    return (
-      <a
-        href={finalPath}
-        class:list={[
-          "lang-button",
-          { active: lang === currentLang },
-        ]}
-      >
-        {label}
-      </a>
-    );
-  })}
+  {
+    Object.entries(languages).map(([lang, label]) => {
+      const href = `/${lang}${currentSlug ? '/' + currentSlug : ''}`;
+      return (
+        <a
+          href={href}
+          class:list={["lang-button", { active: lang === currentLang }]}
+        >
+          {label}
+        </a>
+      );
+    })
+  }
 </div>
 
 <style>
@@ -72,5 +63,30 @@ const slug = pathParts.join("/") || 'index'; // 'index' para la página de inici
     background-color: var(--color-accent-1);
     border-color: var(--color-accent-1);
     color: var(--color-base);
+  }
+
+  /* ===== RESPONSIVE MÓVILES ===== */
+  @media (max-width: 768px) {
+    .lang-switcher {
+      top: 0.5rem;
+      right: 0.5rem;
+      gap: 0.35rem;
+    }
+    .lang-button {
+      padding: 0.2rem 0.5rem;
+      font-size: 0.85rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .lang-switcher {
+      top: 0.35rem;
+      right: 0.35rem;
+      gap: 0.25rem;
+    }
+    .lang-button {
+      padding: 0.15rem 0.4rem;
+      font-size: 0.75rem;
+    }
   }
 </style>

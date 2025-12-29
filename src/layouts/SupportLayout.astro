@@ -1,32 +1,33 @@
-
 ---
-import Layout from './Layout.astro';
-import { useTranslations } from '../i18n/utils';
-import { marked } from 'marked';
+import Layout from "./Layout.astro";
+import { useTranslations } from "../i18n/utils";
+import { getEntry } from "astro:content";
+import { ui } from "../i18n/ui";
+
+interface Props {
+  lang: keyof typeof ui;
+  entryId: string;
+}
 
 const { lang, entryId } = Astro.props;
 
 const t = useTranslations(lang);
 
-const allSupportFiles = await import.meta.glob('../content/support/*.md', { as: 'raw' });
-const supportFilePath = `../content/support/${entryId}.md`;
+const entry = await getEntry("support", entryId);
 
-if (!allSupportFiles[supportFilePath]) {
-  throw new Error(`Support file with path ${supportFilePath} not found.`);
+if (!entry) {
+  throw new Error(`Support file with path ${entryId} not found.`);
 }
 
-const rawContentWithFrontmatter = await allSupportFiles[supportFilePath]();
-
-// Strip frontmatter
-const rawContent = rawContentWithFrontmatter.replace(/---[\s\S]*?---/, '').trim();
-
-const contentHtml = marked.parse(rawContent);
-
+const { Content } = await entry.render();
 ---
-<Layout title={t('nav.support')}>
+
+<Layout title={t("nav.support")}>
   <main class="page-content">
-    <h1 data-i18n-key="nav.support">{t('nav.support')}</h1>
-    <div class="markdown-content" set:html={contentHtml}></div>
+    <h1 data-i18n-key="nav.support">{t("nav.support")}</h1>
+    <div class="markdown-content">
+      <Content />
+    </div>
   </main>
 </Layout>
 
@@ -86,5 +87,51 @@ const contentHtml = marked.parse(rawContent);
 
   .markdown-content :global(a) {
     color: var(--color-accent-2);
+  }
+
+  /* ===== RESPONSIVE MÓVILES ===== */
+  @media (max-width: 768px) {
+    .page-content {
+      margin: 1rem auto;
+      padding: 1.5rem;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+    .markdown-content :global(h2) {
+      font-size: 1.6rem;
+      margin-top: 2.5rem;
+    }
+    .markdown-content :global(h3) {
+      font-size: 1.3rem;
+      margin-top: 2rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .page-content {
+      margin: 0.5rem auto;
+      padding: 1rem;
+    }
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 1.5rem;
+    }
+    .markdown-content :global(h2) {
+      font-size: 1.4rem;
+      margin-top: 2rem;
+    }
+    .markdown-content :global(h3) {
+      font-size: 1.2rem;
+      margin-top: 1.5rem;
+    }
+    .markdown-content :global(p) {
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+    .markdown-content :global(li) {
+      margin-bottom: 0.6rem;
+    }
   }
 </style>

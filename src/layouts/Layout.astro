@@ -1,43 +1,86 @@
 ---
-import LanguageSwitcher from '../components/LanguageSwitcher.astro';
-import { ViewTransitions } from 'astro:transitions';
+import LanguageSwitcher from "../components/LanguageSwitcher.astro";
+import { ViewTransitions } from "astro:transitions";
+import { getLangFromUrl } from "../i18n/utils";
 
 interface Props {
-	title: string;
+  title: string;
 }
 
 const { title } = Astro.props;
 const currentYear = new Date().getFullYear();
+const lang = getLangFromUrl(Astro.url);
+const homePath = `/${lang}/`;
 ---
+
 <!doctype html>
-<html lang="gl">
-<head>
-<meta charset="UTF-8" />
-<meta name="description" content="O obradoiro do inventor sónico." data-i18n-key="page.description" />
-<meta name="viewport" content="width=device-width" />
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<meta name="generator" content={Astro.generator} />
-<title data-i18n-key="page.title">{title}</title>
-    
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="description"
+      content="O obradoiro do inventor sónico."
+      data-i18n-key="page.description"
+    />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title data-i18n-key="page.title">{title}</title>
+
     <ViewTransitions />
 
-<!-- Google Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
-</head>
-<body class="uninitialized">
-    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+Pro:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="uninitialized">
     <div class="sound-controls" transition:persist="audio-controls">
-      <a href="/" id="home-button" class="nav-button" title="Inicio">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg>
+      <a href={homePath} id="home-button" class="nav-button" title="Inicio">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          ><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg
+        >
       </a>
       <button id="back-button" class="nav-button" title="Atrás">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path></svg>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          ><path
+            d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"
+          ></path></svg
+        >
       </button>
-      <button id="mute-button" class="nav-button" title="Silenciar / Activar Sonido">
-        <svg id="icon-unmuted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path></svg>
-        <svg id="icon-muted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="display: none;"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"></path></svg>
+      <button
+        id="mute-button"
+        class="nav-button"
+        title="Silenciar / Activar Sonido"
+      >
+        <svg
+          id="icon-unmuted"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          ><path
+            d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"
+          ></path></svg
+        >
+        <svg
+          id="icon-muted"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          style="display: none;"
+          ><path
+            d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"
+          ></path></svg
+        >
       </button>
 
       <script is:inline>
@@ -54,39 +97,44 @@ const currentYear = new Date().getFullYear();
             startEngine() {
               if (this.isInitialized) return;
               this.isInitialized = true;
-              
+
               try {
-                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                this.audioContext = new (
+                  window.AudioContext || window.webkitAudioContext
+                )();
                 window.audioContext = this.audioContext;
-              } catch (e) { 
-                console.error('AudioContext no disponible:', e);
-                return; 
+              } catch (e) {
+                console.error("AudioContext no disponible:", e);
+                return;
               }
 
               // Oscilador silencioso para mantener el contexto activo
               const silentOsc = this.audioContext.createOscillator();
               const silentGain = this.audioContext.createGain();
               silentGain.gain.value = 0.0;
-              silentOsc.connect(silentGain).connect(this.audioContext.destination);
+              silentOsc
+                .connect(silentGain)
+                .connect(this.audioContext.destination);
               silentOsc.start();
 
               this.masterGain = this.audioContext.createGain();
               this.masterGain.connect(this.audioContext.destination);
               this.masterGain.gain.value = this.isMuted ? 0 : 0.4;
 
-              fetch('/audio/loop_1.mp3')
-                .then(res => res.arrayBuffer())
-                .then(buffer => this.audioContext.decodeAudioData(buffer))
-                .then(decodedBuffer => {
+              fetch("/audio/loop_1.mp3")
+                .then((res) => res.arrayBuffer())
+                .then((buffer) => this.audioContext.decodeAudioData(buffer))
+                .then((decodedBuffer) => {
                   this.audioBuffer = decodedBuffer;
                   if (!this.isMuted) this.play();
                 })
-                .catch(err => console.error('Error cargando audio:', err));
+                .catch((err) => console.error("Error cargando audio:", err));
             },
 
             play() {
-              if (this.loopSource || !this.audioBuffer || !this.audioContext) return;
-              
+              if (this.loopSource || !this.audioBuffer || !this.audioContext)
+                return;
+
               this.loopSource = this.audioContext.createBufferSource();
               this.loopSource.buffer = this.audioBuffer;
               this.loopSource.loop = true;
@@ -103,66 +151,70 @@ const currentYear = new Date().getFullYear();
               }
 
               this.isMuted = !this.isMuted;
-              
+
               if (!this.isMuted && !this.loopSource) {
                 this.play();
               }
 
               this.masterGain.gain.setTargetAtTime(
-                this.isMuted ? 0 : 0.4, 
-                this.audioContext.currentTime, 
-                0.1
+                this.isMuted ? 0 : 0.4,
+                this.audioContext.currentTime,
+                0.1,
               );
-              
-              localStorage.setItem('isMuted', JSON.stringify(this.isMuted));
+
+              localStorage.setItem("isMuted", JSON.stringify(this.isMuted));
               this.updateButtonState();
             },
 
             updateButtonState() {
-              const iconUnmuted = document.getElementById('icon-unmuted');
-              const iconMuted = document.getElementById('icon-muted');
+              const iconUnmuted = document.getElementById("icon-unmuted");
+              const iconMuted = document.getElementById("icon-muted");
               if (!iconUnmuted || !iconMuted) return;
-              iconUnmuted.style.display = this.isMuted ? 'none' : 'block';
-              iconMuted.style.display = this.isMuted ? 'block' : 'none';
-            }
+              iconUnmuted.style.display = this.isMuted ? "none" : "block";
+              iconMuted.style.display = this.isMuted ? "block" : "none";
+            },
           };
 
           // Inicializar estado desde localStorage
-          const savedMuteState = JSON.parse(localStorage.getItem('isMuted') ?? 'true');
+          const savedMuteState = JSON.parse(
+            localStorage.getItem("isMuted") ?? "true",
+          );
           window.audioController.isMuted = savedMuteState;
-          
+
           // Configurar event listeners (solo se ejecuta una vez)
-          const muteButton = document.getElementById('mute-button');
+          const muteButton = document.getElementById("mute-button");
           if (muteButton) {
-            muteButton.addEventListener('click', () => window.audioController.toggleMute());
+            muteButton.addEventListener("click", () =>
+              window.audioController.toggleMute(),
+            );
           }
-          
-          const backButton = document.getElementById('back-button');
+
+          const backButton = document.getElementById("back-button");
           if (backButton) {
-            backButton.addEventListener('click', () => window.history.back());
+            backButton.addEventListener("click", () => window.history.back());
           }
 
           window.audioController.updateButtonState();
         }
 
         // Este evento se dispara después de cada transición de página
-        document.addEventListener('astro:page-load', () => {
+        document.addEventListener("astro:page-load", () => {
           if (window.audioController && window.audioController.audioContext) {
             // Reanudar el contexto si está suspendido
-            if (window.audioController.audioContext.state === 'suspended') {
+            if (window.audioController.audioContext.state === "suspended") {
               window.audioController.audioContext.resume();
             }
-            
+
             // Actualizar el estado visual de los botones
             window.audioController.updateButtonState();
           }
         });
 
         // Evento antes de que la página se intercambie
-        document.addEventListener('astro:before-swap', () => {
+        document.addEventListener("astro:before-swap", () => {
           // Asegurarse de que el audio siga reproduciéndose
           if (window.audioController && window.audioController.audioContext) {
-            if (window.audioController.audioContext.state === 'running') {
+            if (window.audioController.audioContext.state === "running") {
               // No hacer nada, dejar que siga corriendo
             }
           }
@@ -171,31 +223,87 @@ const currentYear = new Date().getFullYear();
     </div>
 
     <LanguageSwitcher />
-<slot />
+    <slot />
 
     <footer>
-      © {currentYear} Toño Pita | <a href="mailto:tonetxo@gmail.com">tonetxo@gmail.com</a> | <span data-i18n-key="footer.rights">Todos os dereitos reservados.</span>
+      © {currentYear} Toño Pita | <a href="mailto:tonetxo@gmail.com"
+        >tonetxo@gmail.com</a
+      > | <span data-i18n-key="footer.rights"
+        >Todos os dereitos reservados.</span
+      >
     </footer>
-</body>
+  </body>
 </html>
 
 <style is:global>
-  @font-face { font-family: 'Castelao'; src: url('/fonts/Castelao.woff2') format('woff2'); font-weight: normal; font-style: normal; font-display: swap; }
-:root { --color-base: #2a2a2a; --color-text: #e0e0e0; --color-accent-1: #b87333; --color-accent-2: #e1c16e; --font-family-headings: 'Playfair Display', serif; --font-family-body: 'Source Sans Pro', sans-serif; }
-html { font-family: var(--font-family-body); background-color: var(--color-base); color: var(--color-text); }
-body { 
-    margin: 0; 
-    box-sizing: border-box; 
-    min-height: 100vh; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
+  @font-face {
+    font-family: "Castelao";
+    src: url("/fonts/Castelao.woff2") format("woff2");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
   }
-h1, h2, h3, h4 { font-family: var(--font-family-headings); color: var(--color-accent-2); margin: 0; }
-  .sound-controls { position: fixed; top: 1rem; left: 1rem; z-index: 100; display: flex; gap: 0.5rem; }
-  .nav-button { background: transparent; border: 1px solid var(--color-accent-2); color: var(--color-accent-2); cursor: pointer; border-radius: 50%; width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; opacity: 0.7; transition: all 0.2s ease; padding: 0; }
-  .nav-button:hover { opacity: 1; background-color: var(--color-accent-2); color: var(--color-base); }
-  .nav-button svg { width: 24px; height: 24px; }
+  :root {
+    --color-base: #2a2a2a;
+    --color-text: #e0e0e0;
+    --color-accent-1: #b87333;
+    --color-accent-2: #e1c16e;
+    --font-family-headings: "Playfair Display", serif;
+    --font-family-body: "Source Sans Pro", sans-serif;
+  }
+  html {
+    font-family: var(--font-family-body);
+    background-color: var(--color-base);
+    color: var(--color-text);
+  }
+  body {
+    margin: 0;
+    box-sizing: border-box;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-family-headings);
+    color: var(--color-accent-2);
+    margin: 0;
+  }
+  .sound-controls {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 100;
+    display: flex;
+    gap: 0.5rem;
+  }
+  .nav-button {
+    background: transparent;
+    border: 1px solid var(--color-accent-2);
+    color: var(--color-accent-2);
+    cursor: pointer;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0.7;
+    transition: all 0.2s ease;
+    padding: 0;
+  }
+  .nav-button:hover {
+    opacity: 1;
+    background-color: var(--color-accent-2);
+    color: var(--color-base);
+  }
+  .nav-button svg {
+    width: 24px;
+    height: 24px;
+  }
   footer {
     position: fixed;
     bottom: 0;
@@ -229,6 +337,49 @@ h1, h2, h3, h4 { font-family: var(--font-family-headings); color: var(--color-ac
   .main-grid main > .container > header,
   .main-grid main > .container > .content,
   .slideshow-container {
-    transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+    transition:
+      opacity 0.4s ease-out,
+      transform 0.4s ease-out;
+  }
+
+  /* ===== RESPONSIVE MÓVILES ===== */
+  @media (max-width: 768px) {
+    .sound-controls {
+      top: 0.5rem;
+      left: 0.5rem;
+      gap: 0.35rem;
+    }
+    .nav-button {
+      width: 36px;
+      height: 36px;
+    }
+    .nav-button svg {
+      width: 20px;
+      height: 20px;
+    }
+    footer {
+      font-size: 0.7rem;
+      padding: 0.5rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .sound-controls {
+      top: 0.35rem;
+      left: 0.35rem;
+      gap: 0.25rem;
+    }
+    .nav-button {
+      width: 32px;
+      height: 32px;
+    }
+    .nav-button svg {
+      width: 18px;
+      height: 18px;
+    }
+    footer {
+      font-size: 0.65rem;
+      padding: 0.4rem 0.25rem;
+    }
   }
 </style>

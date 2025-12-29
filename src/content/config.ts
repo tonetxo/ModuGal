@@ -10,7 +10,15 @@ const modulesCollection = defineCollection({
   }),
 });
 
+const supportCollection = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string().optional(),
+  }),
+});
+
 // 3. Export a single `collections` object to register your collection(s)
 export const collections = {
   'modules': modulesCollection,
+  'support': supportCollection,
 };
