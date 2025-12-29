@@ -792,9 +792,94 @@ const images = [
           const evt = e as WheelEvent;
           evt.preventDefault();
           const delta = evt.deltaY > 0 ? -0.1 : 0.1;
-          scale = Math.max(1, Math.min(scale + delta, 5));
-          if (scale === 1) transform = { x: 0, y: 0 };
-          applyTransform(images[currentIndex]);
+          const newScale = Math.max(1, Math.min(scale + delta, 5));
+
+          if (newScale !== scale) {
+            scale = newScale;
+            if (scale === 1) transform = { x: 0, y: 0 };
+            applyTransform(images[currentIndex]);
+          }
+        });
+
+        // Touch Logic
+        let initialDistance = 0;
+        let initialScale = 1;
+        let activeTouches = 0;
+
+        function getDistance(touches: TouchList) {
+          const [t1, t2] = [touches[0], touches[1]];
+          const dx = t1.clientX - t2.clientX;
+          const dy = t1.clientY - t2.clientY;
+          return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        slideshowContainer.addEventListener(
+          "touchstart",
+          (e) => {
+            const evt = e as TouchEvent;
+            // Don't prevent default immediately to allow scrolling if not interacting
+
+            activeTouches = evt.touches.length;
+            stopSlideshow();
+
+            if (activeTouches === 1) {
+              // Pan
+              panning = true;
+              start = {
+                x: evt.touches[0].clientX - transform.x,
+                y: evt.touches[0].clientY - transform.y,
+              };
+            } else if (activeTouches === 2) {
+              // Pinch Zoom
+              panning = false;
+              initialDistance = getDistance(evt.touches);
+              initialScale = scale;
+              // Prevent page scroll when pinching
+              evt.preventDefault();
+            }
+          },
+          { passive: false },
+        );
+
+        slideshowContainer.addEventListener(
+          "touchmove",
+          (e) => {
+            const evt = e as TouchEvent;
+            activeTouches = evt.touches.length;
+
+            if (activeTouches === 1 && panning && scale > 1) {
+              // Pan only if zoomed in
+              evt.preventDefault(); // Prevent scroll while panning
+              transform.x = evt.touches[0].clientX - start.x;
+              transform.y = evt.touches[0].clientY - start.y;
+              applyTransform(images[currentIndex]);
+            } else if (activeTouches === 2) {
+              // Pinch Zoom
+              evt.preventDefault();
+              const currentDistance = getDistance(evt.touches);
+              if (initialDistance > 0) {
+                const newScale =
+                  initialScale * (currentDistance / initialDistance);
+                scale = Math.max(1, Math.min(newScale, 5));
+                if (scale === 1) transform = { x: 0, y: 0 }; // Reset pan
+                applyTransform(images[currentIndex]);
+              }
+            }
+          },
+          { passive: false },
+        );
+
+        slideshowContainer.addEventListener("touchend", (e) => {
+          const evt = e as TouchEvent;
+          // If touches drop, reset specific interaction states
+          if (evt.touches.length === 0) {
+            panning = false;
+            startSlideshow();
+          } else if (evt.touches.length === 1) {
+            // Switch to pan mode seamlessly? Hard without resetting 'start'
+            // Easier to just stop pinch and wait for lift off or re-tap
+            panning = false;
+          }
         });
 
         function advance() {
